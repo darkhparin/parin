@@ -1,0 +1,29 @@
+const String TestViewRoute = "TestView";
+const String UpdateViewRoute = "UpdateView";
+const String StartupViewRoute = "StartupView";
+const String LoginViewRoute = "LoginView";
+const String MobileConfOtpViewRoute = "MobileConfOtpView";
+const String UpdateDeviceIdViewRoute = "UpdateDeviceIdView";
+const String RegisterViewRoute = "RegisterView";
+const String HomeViewRoute = "HomeView";
+const String GuestViewRoute = "GuestView";
+const String BookingViewRoute = "BookingView";
+const String PartBUpdateViewRoute = "PartBUpdateView";
+const String BookingPartyAddViewRoute = "BookingPartyAddView";
+const String ExtendEwayBillViewRoute = "ExtendEwayBillView";
+const String TripCreateViewRoute = "TripCreateView";
+const String TripUpdateDriverViewRoute = "TripUpdateDriverView";
+const String UploadPODViewRoute = "UploadPODView";
+const String DocketSearchViewRoute = "DocketSearchView";
+const String RateCalcViewRoute = "RateCalchView";
+const String FualUpdateViewRoute = "FualUpdateView";
+const String OrderInvoiceCreateRoute = "OrderInvoiceCreateView";
+const String PincodeServiceabilityRoute = "PincodeServiceabilityView";
+const String PdfViewerPageRoute = "PdfViewerPage";
+const String DocketTrackingFullPageViewRoute = "DocketTrackingViewView";
+const String ChatAppViewRoute = "ChatApp";
+const String BranchListViewRoute = "BranchListView";
+const String TripDepartDriverViewRoute = "TripDepartDriverView";
+
+// DashBoards
+const String DashBoardDriverViewRoute = "DashBoardDriverView";

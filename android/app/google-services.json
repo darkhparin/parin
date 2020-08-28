@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "604895108157",
+    "firebase_url": "https://my-cwl-india.firebaseio.com",
+    "project_id": "my-cwl-india",
+    "storage_bucket": "my-cwl-india.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604895108157:android:0b8318f39ac9e6ffcc5e54",
+        "android_client_info": {
+          "package_name": "cwl.android.logistics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604895108157-2tl6as66a494eunoemc6rm2rla3v780a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cwl.android.logistics",
+            "certificate_hash": "513f47bb5cb43e755a57dc8839b591c00d755428"
+          }
+        },
+        {
+          "client_id": "604895108157-he22bognma0pc8tgu66s695msc9gqgn3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRnVzjGVuR6WlulxlIDoO8zf2T0sAFrsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604895108157-he22bognma0pc8tgu66s695msc9gqgn3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
