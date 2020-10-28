@@ -102,6 +102,9 @@ class LoginView extends StatelessWidget {
                                 child: InputField(
                                   placeholder: 'Username',
                                   controller: usernameController,
+                                  onChanged: (text) {
+                                    model.setusername(text);
+                                  },
                                 ),
                               ),
                               Container(
@@ -110,6 +113,9 @@ class LoginView extends StatelessWidget {
                                   placeholder: 'Password',
                                   password: true,
                                   controller: passwordController,
+                                  onChanged: (text) {
+                                    model.setpassword(text);
+                                  },
                                 ),
                               )
                             ],
@@ -154,6 +160,11 @@ class LoginView extends StatelessWidget {
                         ),
                         child: Center(
                             child: BusyButton(
+                          enabled: usernameController.text.length > 3
+                              ? passwordController.text.length > 3
+                                  ? true
+                                  : false
+                              : false,
                           title: 'Login',
                           busy: model.busy,
                           onPressed: () {
@@ -164,10 +175,7 @@ class LoginView extends StatelessWidget {
                             // } catch (e) {
                             //   print(e);
                             // }
-                            model.login(
-                              username: usernameController.text,
-                              password: passwordController.text,
-                            );
+                            model.login();
                           },
                         )),
                       ),

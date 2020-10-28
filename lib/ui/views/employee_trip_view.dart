@@ -214,19 +214,20 @@ Widget branchTripList(context, BranchListViewModel model) {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text(
-                                        'Last Address: ${model.triplist[idx].lastLocationAddress == null ? 'N/A' : model.triplist[idx].lastLocationAddress}',
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
                                       SizedBox(
                                         height: 10,
                                       ),
                                       Text(
-                                        'Last Loation: ${model.triplist[idx].lastLocation}',
+                                        'Location: ${model.triplist[idx].lastLocationAddress == null ? 'N/A' : model.triplist[idx].lastLocationAddress}',
+                                        overflow: TextOverflow.fade,
                                         style: const TextStyle(
-                                            fontSize: 15,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Update On: ${model.triplist[idx].lastLocation}',
+                                        style: const TextStyle(
+                                            fontSize: 12,
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),

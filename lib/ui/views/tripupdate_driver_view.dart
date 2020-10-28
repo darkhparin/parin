@@ -538,19 +538,19 @@ class _TripUpdateDriverViewState extends State<TripUpdateDriverView> {
                   ),
                 ),
                 verticalSpaceMedium,
-                getLoadDetailsList(model),
+                // getLoadDetailsList(model),
                 verticalSpaceMedium,
-                model.loadDetailsList.length > 0
-                    ? BusyButton(
-                        title:
-                            'Docket Plan in ${model.currentTripRoute.branch}',
-                        busy: model.busy,
-                        onPressed: () {
-                          model.planLoadForDriver();
-                          clearDocketInput();
-                        },
-                      )
-                    : Container(),
+                // model.loadDetailsList.length > 0
+                //     ? BusyButton(
+                //         title:
+                //             'Docket Plan in ${model.currentTripRoute.branch}',
+                //         busy: model.busy,
+                //         onPressed: () {
+                //           model.planLoadForDriver();
+                //           clearDocketInput();
+                //         },
+                //       )
+                //     : Container(),
               ],
             ),
           ),

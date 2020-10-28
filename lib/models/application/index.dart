@@ -94,3 +94,6 @@ export 'package:cwl/models/ewaybill/consilidatedEwayBillModel.dart';
 export 'package:cwl/models/ewaybill/consolidatedEwayBillRequestModel.dart';
 export 'package:cwl/models/trip/loadingTallyListModel.dart';
 export 'package:cwl/models/trip/loadingTallyModel.dart';
+export 'package:cwl/models/account/GetLastAttendanceResponceModel.dart';
+export 'package:cwl/models/account/PostAttendanceReportRequestModel.dart';
+export 'package:cwl/models/account/PostAttendanceRequestModel.dart';

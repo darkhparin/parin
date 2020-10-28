@@ -107,11 +107,12 @@ class _BookingViewState extends State<BookingView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<BookingViewModel>.withConsumer(
-      viewModel: BookingViewModel(),
+      viewModelBuilder: () => BookingViewModel(),
       onModelReady: (model) => model.handleStartUpLogic(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text('Booking'),
+          title: Text('Order Booking'),
+          centerTitle: true,
           actions: <Widget>[
             // action button
             IconButton(
@@ -155,6 +156,7 @@ class _BookingViewState extends State<BookingView> {
                           textInputAction: TextInputAction.next,
                           onChanged: (text) {
                             model.getDocektNoResponce(text);
+                            model.setdocketNoTextFild(text);
                           },
                           validationMessage: model.errordocketno,
                         ),
@@ -184,6 +186,7 @@ class _BookingViewState extends State<BookingView> {
                     //   },
                     // ),
                     verticalSpaceMedium,
+
                     Text('EwayBill No'),
                     Row(children: <Widget>[
                       Expanded(
@@ -242,7 +245,7 @@ class _BookingViewState extends State<BookingView> {
                           }),
                     ),
                     Text(
-                      'E-wayBill:  ${model.ewayBillList.length.toString()}',
+                      'E-wayBill:  ${model.ewayBillList.length.toString()} ',
                       style: TextStyle(color: Colors.red),
                     ),
                     verticalSpaceMedium,
@@ -730,8 +733,9 @@ class _BookingViewState extends State<BookingView> {
                             );
                           }),
                     ),
-                    verticalSpaceMedium,
 
+                    getImagePicker(),
+                    verticalSpaceMedium,
                     Container(
                       decoration: BoxDecoration(
                           color: Colors.orange[100],
@@ -985,7 +989,7 @@ class _BookingViewState extends State<BookingView> {
                       ),
                     ),
                     verticalSpaceMedium,
-                    getImagePicker(),
+
                     verticalSpaceLarge,
                     Container(
                       padding: const EdgeInsets.symmetric(

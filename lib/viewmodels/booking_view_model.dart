@@ -483,7 +483,6 @@ class BookingViewModel extends BaseModel {
 
   Pincodeshort _consignorpincode = new Pincodeshort();
   Pincodeshort get consignorpincode => _consignorpincode;
-
   void setconsignorpincode(Pincodeshort model) {
     _consignorpincode = model;
     notifyListeners();
@@ -639,6 +638,16 @@ class BookingViewModel extends BaseModel {
     setrateCardCharge(null);
     _rateCardCharges = value == null ? new List<Ratecardcharges>() : value;
     notifyListeners();
+    if (_rateCardCharges.length > 0) {
+      setRateCardRate(_rateCardCharges.first.rate);
+    }
+  }
+
+  num _rate = 0;
+  num get rateCardRate => _rate;
+  void setRateCardRate(num val) {
+    _rate = val;
+    notifyListeners();
   }
 
   Ratecardcharges _rateCardCharge = new Ratecardcharges();
@@ -725,6 +734,7 @@ class BookingViewModel extends BaseModel {
       setBusy(true);
       Orderlinerequest model = new Orderlinerequest();
       model.actualweight = totalweight;
+
       model.dimentionMode = unit;
       model.oHeight = height == '' ? 0 : num.parse(height);
       model.oLength = length == null ? 0 : num.parse(length);
@@ -786,6 +796,13 @@ class BookingViewModel extends BaseModel {
     notifyListeners();
   }
 
+  String _docketNoTextFild;
+  String get docketNoTextFild => _docketNoTextFild;
+  void setdocketNoTextFild(String value) {
+    _docketNoTextFild = value;
+    notifyListeners();
+  }
+
   Future getRateCalculation() async {
     try {
       setBusy(true);
@@ -811,7 +828,7 @@ class BookingViewModel extends BaseModel {
       model.consignorPincode = _consignorpincode.pincode;
       model.deliveryBranchId = _ewaybillresponce.deliveryBranchId;
       model.deliveryTypeId = _consignee.deliveryType.deliveryTypeId;
-      model.docketNo = _docketnoresponce.docketNo;
+      model.docketNo = docketNoTextFild;
       model.ftlRateCardChargesId = 0; // TODO : Do Something for this
       model.fuelSurchargePercent = _fualsarcharge;
       model.fovPercent = _fov;
@@ -972,7 +989,7 @@ class BookingViewModel extends BaseModel {
       model.deliveryLocation.postalCode = deliveryLocation.postalCode;
       model.deliveryLocation.state_Id = deliveryLocation.state_Id;
 
-      model.docketNo = _docketnoresponce.docketNo;
+      model.docketNo = docketNoTextFild;
       model.docketRemark = ''; // TODO
       model.ewayBills = _ewaybillresponce.allEwayBills;
       model.hasCOD = false;

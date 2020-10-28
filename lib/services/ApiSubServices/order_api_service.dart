@@ -339,7 +339,7 @@ class OrderAPIService {
   /// Get Rate Calculation Responce
   Future<Ratecalculationresponce> getRateCalculationResponce(
       Ratecalculationrequest model) async {
-    print(json.encode(model.toJson()));
+    //  print(json.encode(model.toJson()));
     var response = await _client.post(
       '$_endpoint/booking/GetRateCalculations',
       headers: {

@@ -60,7 +60,14 @@ class StartUpViewModel extends BaseModel {
                 password: loginModel.password,
                 deviceId: deviceId);
             if (!loginResponce.error) {
-              _navigationService.navigateReplacementTo(GuestViewRoute);
+              Future sleep1() {
+                return new Future.delayed(
+                    const Duration(seconds: 3),
+                    () => _navigationService
+                        .navigateReplacementTo(GuestViewRoute));
+              }
+
+              sleep1();
             } else {
               if (loginResponce.message.contains('Device Not Registered')) {
                 var userIdstr = loginResponce.message.replaceAll(

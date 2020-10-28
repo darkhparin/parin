@@ -1,11 +1,18 @@
 import 'package:cwl/common/DocketSearch.dart';
 import 'package:cwl/common/RateCalc.dart';
 import 'package:cwl/common/DocketSearch.dart';
+import 'package:cwl/models/account/GetLastAttendanceResponceModel.dart';
 import 'package:cwl/services/api_services.dart';
+import 'package:cwl/ui/shared/progress_indicetor.dart';
 import 'package:cwl/ui/views/Driver_Fual_update_view.dart';
 import 'package:cwl/ui/views/Pincode_Serviceability_view.dart';
+import 'package:cwl/ui/views/booking_view_new_design.dart';
 import 'package:cwl/ui/widgets/animation.dart';
+import 'package:cwl/ui/widgets/blinking_text.dart';
+import 'package:cwl/ui/widgets/busy_button.dart';
 import 'package:cwl/ui/widgets/drawer.dart';
+import 'package:cwl/ui/widgets/input_field.dart';
+import 'package:cwl/ui/widgets/popup.dart';
 import 'package:cwl/viewmodels/guest_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,16 +50,18 @@ class GuestView extends StatefulWidget {
 int _currentIndex = 0;
 
 class _GuestViewState extends State<GuestView> {
+  final attendanceReportController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final NavigationService _navigationService = locator<NavigationService>();
+    final ApiService _apiService = locator<ApiService>();
     return ViewModelProvider<GuestViewModel>.withConsumer(
       viewModelBuilder: () => GuestViewModel(),
       onModelReady: (model) => model.handleStartUpLogic(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
-            'Welcome To CWL India',
+            'CWL India',
             style: TextStyle(
                 color: Colors.white, fontSize: displayWidth(context) * 0.050),
           ),
@@ -69,10 +78,32 @@ class _GuestViewState extends State<GuestView> {
               ),
               onPressed: () {
                 _navigationService.navigateTo(PincodeServiceabilityRoute);
-                // Navigator.of(context).push(PincodeServiceabilityRoute1());
-                // //Navigator.pop(context);
               },
             ),
+            _apiService.userdetails.userTypeId == 2
+                ? _apiService.accountAPIService.checkAttendance == false
+                    ? FadeAnimation(
+                        1,
+                        FloatingActionButton.extended(
+                          label: BlinkingText('Attendance'),
+                          backgroundColor: Colors.white,
+                          onPressed: () => {
+                            model.getLastAttendance(),
+                            showPopup(
+                                context,
+                                _attendanceReportPopUP(context, model),
+                                'Today Attendances'),
+                          },
+                        ),
+                      )
+                    : Container(
+                        height: 0,
+                        width: 0,
+                      )
+                : Container(
+                    height: 0,
+                    width: 0,
+                  )
           ],
         ),
         drawer: AppDrawer(model.appVersion),
@@ -97,6 +128,170 @@ class _GuestViewState extends State<GuestView> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.dehaze), title: Text("Tools")),
           ],
+        ),
+      ),
+    );
+  }
+
+  var date = new DateTime.now();
+
+  Widget _attendanceReportPopUP(context, GuestViewModel model) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Container(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: new Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                  child: Text(
+                    'Date: ${date.toString().replaceRange(10, 26, '')}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                verticalSpaceMedium,
+                Row(children: <Widget>[
+                  Expanded(
+                    child: InputField(
+                      placeholder: 'Attendance Report',
+                      controller: attendanceReportController,
+                      textInputType: TextInputType.text,
+                      onChanged: (text) => {
+                        setState(() {
+                          model.setAttendancetext(text);
+                        }),
+                      },
+                    ),
+                  ),
+                ]),
+                verticalSpaceSmall,
+                Center(
+                  child: FloatingActionButton.extended(
+                    icon: Icon(Icons.arrow_forward),
+                    backgroundColor: Colors.orange[500],
+                    label: Text('Submit Report'),
+                    onPressed: () => {
+                      model.postAttendanceReportRequestModel(),
+                      if (attendanceReportController.text.length > 4)
+                        {
+                          Navigator.pop(context),
+                          showPopup(context, _attendanceSubmit(context, model),
+                              'My Attendances'),
+                        }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _attendanceSubmit(context, GuestViewModel model) {
+    final NavigationService _navigationService = locator<NavigationService>();
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Container(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: new Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                  child: Text(
+                    'Today Present ?',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                verticalSpaceMedium,
+                Row(
+                  children: <Widget>[
+                    Center(
+                      child: FloatingActionButton.extended(
+                        icon: Icon(Icons.beenhere),
+                        backgroundColor: Colors.green,
+                        label: Text('Present'),
+                        onPressed: () => {
+                          model.setattendancePresent(1),
+                          model.postAttendanceRequestModel(),
+                          Navigator.pop(context),
+                          // model.postAttendanceRequestResponce == true
+                          //     ? _navigationService
+                          //         .navigateReplacementTo(GuestViewRoute)
+                          //     : showLoading(),
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Center(
+                      child: FloatingActionButton.extended(
+                        icon: Icon(Icons.close),
+                        backgroundColor: Colors.red,
+                        label: Text('Absent'),
+                        onPressed: () => {
+                          Navigator.pop(context),
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                verticalSpaceSmall,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget showLoading() {
+    return Center(
+      heightFactor: 5,
+      child: LoadingWidget(),
+    );
+  }
+
+  showPopup(BuildContext context, Widget widget, String title,
+      {BuildContext popupContext}) {
+    Navigator.push(
+      context,
+      PopupLayout(
+        top: 30,
+        left: 30,
+        right: 30,
+        bottom: 300,
+        child: PopupContent(
+          content: Scaffold(
+            appBar: AppBar(
+              title: Text(title),
+              leading: new Builder(builder: (context) {
+                return IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    try {
+                      Navigator.pop(context); //close the popup
+                    } catch (e) {}
+                  },
+                );
+              }),
+              brightness: Brightness.light,
+            ),
+            resizeToAvoidBottomPadding: false,
+            body: widget,
+          ),
         ),
       ),
     );
@@ -226,7 +421,7 @@ Widget homeScreeTopPart(BuildContext context) {
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -270,7 +465,7 @@ Widget homeScreenBottomPart(BuildContext context) {
 
 // For Employee user Show Manu
         _apiService.userdetails.userTypeId == 2
-            ? getMenuForUserEmp()
+            ? getMenuForUserEmp(context)
             : Container(
                 height: 0,
                 width: 0,
@@ -296,7 +491,7 @@ Widget homeScreenBottomPart(BuildContext context) {
   );
 }
 
-Widget getMenuForUserEmp() {
+Widget getMenuForUserEmp(context) {
   final NavigationService _navigationService = locator<NavigationService>();
   return FadeAnimation(
     0.5,
@@ -463,6 +658,30 @@ Widget getMenuForUserEmp() {
                       color: Colors.blue[800],
                     ),
                     Text("Chat")
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Card(
+            color: Colors.orange[100],
+            child: InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => BookingView1(),
+                  )),
+              splashColor: Colors.blueAccent,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.chat,
+                      size: 40.0,
+                      color: Colors.blue[800],
+                    ),
+                    Text("New Booking")
                   ],
                 ),
               ),

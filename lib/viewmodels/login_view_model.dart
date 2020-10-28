@@ -28,10 +28,24 @@ class LoginViewModel extends BaseModel {
 
   String get msg => _errormsg;
 
-  Future login({
-    @required String username,
-    @required String password,
-  }) async {
+  String _username;
+  String get username => _username;
+  void setusername(String value) {
+    _username = value;
+    notifyListeners();
+  }
+
+  String _password;
+  String get password => _password;
+  void setpassword(String value) {
+    _password = value;
+    notifyListeners();
+  }
+
+  Future login(
+      // @required String username,
+      // @required String password,
+      ) async {
     try {
       setBusy(true);
       var model = new Loginrequest();
