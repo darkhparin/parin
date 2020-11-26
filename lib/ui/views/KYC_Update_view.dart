@@ -440,6 +440,7 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                     model.setisDeleted(value);
                   });
                 },
+                //
                 activeTrackColor: Colors.orange,
                 activeColor: Colors.red,
                 inactiveTrackColor: Colors.green[300],
