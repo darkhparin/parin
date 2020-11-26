@@ -17,6 +17,9 @@ class OrderTrackingFullModeltsd {
   String vehicle;
   int onHoldHours;
 
+  num latitude;
+  num longitude;
+
   factory OrderTrackingFullModeltsd.fromJson(Map<String, dynamic> json) =>
       _$OrderTrackingFullModeltsdFromJson(json);
   Map<String, dynamic> toJson() => _$OrderTrackingFullModeltsdToJson(this);

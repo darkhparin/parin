@@ -39,6 +39,9 @@ class TripDetailsModel {
   LatLongModel toLocation;
   LatLongModel currentLocation;
 
+  num latitude;
+  num longitude;
+
   factory TripDetailsModel.fromJson(Map<String, dynamic> json) =>
       _$TripDetailsModelFromJson(json);
   Map<String, dynamic> toJson() => _$TripDetailsModelToJson(this);

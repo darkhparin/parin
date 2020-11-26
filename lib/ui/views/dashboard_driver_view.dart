@@ -229,7 +229,7 @@ class _DashBoardDriverViewState extends State<DashBoardDriverView>
                     }),
                 verticalSpaceSmall,
 
-                model.canArriveLocal
+                model.canArriveTrip != 0
                     ? arriveTripBody(model)
                     // BusyButton(
                     //     title: 'Arrive',

@@ -64,4 +64,56 @@ class PartyAPIService {
       throw new Exception(response.body);
     }
   }
+
+  /// Get Party KYC List Responce
+  Future<List<Commonmodel>> getPartyLatestListResponce() async {
+    var response =
+        await _client.get('$_endpoint/Party/GetPartyLatestList/100', headers: {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.acceptHeader: 'application/json',
+      HttpHeaders.authorizationHeader: _token
+    });
+
+    if (response.statusCode == 200) {
+      return Commonmodellist.fromJson(json.decode(response.body)).commonlist;
+    } else {
+      throw new Exception(response.body);
+    }
+  }
+
+  /// Get Party Contect Details  Responce
+  Future<GetPartyContactDetailsModel> getPartyContactDetails(
+      int setpartyid) async {
+    var response = await _client
+        .get('$_endpoint/Party/GetPartyContactDetails/$setpartyid', headers: {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.acceptHeader: 'application/json',
+      HttpHeaders.authorizationHeader: _token
+    });
+
+    if (response.statusCode == 200) {
+      return GetPartyContactDetailsModel.fromJson(json.decode(response.body));
+    } else {
+      throw new Exception(response.body);
+    }
+  }
+
+  /// Save KYC Responce
+  Future<bool> saveKYCDetails(GetPartyContactDetailsModel model) async {
+    print(json.encode(model.toJson()));
+    var response = await _client.post(
+      '$_endpoint/Party/UpdatePartyContactDetails',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "$_token"
+      },
+      body: json.encode(model.toJson()),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw new Exception(response.body);
+    }
+  }
 }

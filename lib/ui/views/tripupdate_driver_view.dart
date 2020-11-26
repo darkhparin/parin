@@ -501,7 +501,8 @@ class _TripUpdateDriverViewState extends State<TripUpdateDriverView> {
                         setState(() {
                           model.setcode(text);
                           if (docketnumberController.text.length == 7 ||
-                              docketnumberController.text.length == 11) {
+                              docketnumberController.text.length == 11 ||
+                              docketnumberController.text.length == 6) {
                             model.getLoadDetails();
                           }
                         }),

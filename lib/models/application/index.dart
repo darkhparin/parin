@@ -97,3 +97,6 @@ export 'package:cwl/models/trip/loadingTallyModel.dart';
 export 'package:cwl/models/account/GetLastAttendanceResponceModel.dart';
 export 'package:cwl/models/account/PostAttendanceReportRequestModel.dart';
 export 'package:cwl/models/account/PostAttendanceRequestModel.dart';
+export 'package:cwl/models/GPS/GPSResponceModel.dart';
+export 'package:cwl/models/party/GetPartyLatestListModel.dart';
+export 'package:cwl/models/party/GetPartyContactDetailsModel.dart';

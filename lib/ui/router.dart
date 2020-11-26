@@ -3,12 +3,14 @@ import 'package:cwl/common/RateCalc.dart';
 import 'package:cwl/common/chat/main.dart';
 import 'package:cwl/models/params/partbupdateparam.dart';
 import 'package:cwl/ui/parameeters/party_add_parameter.dart';
+import 'package:cwl/ui/views/KYC_Update_view.dart';
 import 'package:cwl/ui/views/Order_Invoice_Create_View.dart';
 import 'package:cwl/ui/views/Pincode_Serviceability_view.dart';
 import 'package:cwl/ui/views/booking_party_add_view.dart';
 import 'package:cwl/ui/views/booking_view.dart';
 import 'package:cwl/ui/views/dashboard_driver_view.dart';
 import 'package:cwl/ui/views/extendewaybill_view.dart';
+import 'package:cwl/ui/views/gps_View_all.dart';
 import 'package:cwl/ui/views/guest_view.dart';
 import 'package:cwl/ui/views/invocie_pdf_view.dart';
 import 'package:cwl/ui/views/login_view.dart';
@@ -172,6 +174,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         routeName: settings.name,
         viewToShow: TripDepartDriverView(tripId: _tripId),
       );
+    case GPSViewAllViewRoute:
+      return _getPageRoute(
+        routeName: settings.name,
+        viewToShow: GpsVehicleView(),
+      );
+    case KycUpdateViewRoute:
+      return _getPageRoute(
+        routeName: settings.name,
+        viewToShow: KycUpdateView(),
+      );
+
     /*
     
     case HomeViewRoute:

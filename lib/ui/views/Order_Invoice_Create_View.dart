@@ -27,7 +27,7 @@ class _OrderInvoiceCreateViewState extends State<OrderInvoiceCreateView> {
   Widget build(BuildContext context) {
     final NavigationService _navigationService = locator<NavigationService>();
     return ViewModelProvider<OrderInvoiceViewModel>.withConsumer(
-      viewModel: OrderInvoiceViewModel(),
+      viewModelBuilder: () => OrderInvoiceViewModel(),
       onModelReady: (model) async {
         await model.handleStartUpLogic(widget._orderidNo);
         emailController.text =

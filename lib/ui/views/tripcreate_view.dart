@@ -274,7 +274,7 @@ class _TripCreateViewState extends State<TripCreateView> {
               ),
       ],
     );
-  }
+  } 
 
   Widget getVehicleNo(TripCreateViewModel model) {
     _vehicleAutoFill = AutoCompleteTextField<TripVehicleAutoFillModel>(

@@ -5,8 +5,11 @@ import 'package:cwl/models/account/GetLastAttendanceResponceModel.dart';
 import 'package:cwl/services/api_services.dart';
 import 'package:cwl/ui/shared/progress_indicetor.dart';
 import 'package:cwl/ui/views/Driver_Fual_update_view.dart';
+import 'package:cwl/ui/views/KYC_Update_view.dart';
 import 'package:cwl/ui/views/Pincode_Serviceability_view.dart';
 import 'package:cwl/ui/views/booking_view_new_design.dart';
+import 'package:cwl/ui/views/gps_View_all.dart';
+import 'package:cwl/ui/views/test_view.dart';
 import 'package:cwl/ui/widgets/animation.dart';
 import 'package:cwl/ui/widgets/blinking_text.dart';
 import 'package:cwl/ui/widgets/busy_button.dart';
@@ -502,7 +505,9 @@ Widget getMenuForUserEmp(context) {
         crossAxisCount: 3,
         children: <Widget>[
           Card(
-            color: Colors.blueAccent[100],
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
             child: InkWell(
               onTap: () {
                 _navigationService.navigateTo(BookingViewRoute);
@@ -525,7 +530,9 @@ Widget getMenuForUserEmp(context) {
             ),
           ),
           Card(
-            color: Colors.orange[100],
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
             child: InkWell(
               onTap: () {
                 _navigationService.navigateTo(TripCreateViewRoute);
@@ -572,7 +579,9 @@ Widget getMenuForUserEmp(context) {
           //   ),
           // ),
           Card(
-            color: Colors.blueAccent[100],
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
             child: InkWell(
               onTap: () {
                 _navigationService.navigateTo(UploadPODViewRoute);
@@ -594,31 +603,11 @@ Widget getMenuForUserEmp(context) {
               ),
             ),
           ),
+
           Card(
-            color: Colors.orange[100],
-            child: InkWell(
-              onTap: () {
-                _navigationService.navigateTo(FualUpdateViewRoute);
-                //Navigator.pop(context);
-              },
-              splashColor: Colors.blueAccent,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      Icons.swap_calls,
-                      size: 40.0,
-                      color: Colors.blue[800],
-                    ),
-                    Text("Fual Details")
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueAccent[100],
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
             child: InkWell(
               onTap: () {
                 _navigationService.navigateTo(BranchListViewRoute);
@@ -641,35 +630,14 @@ Widget getMenuForUserEmp(context) {
             ),
           ),
           Card(
-            color: Colors.orange[100],
-            child: InkWell(
-              onTap: () {
-                _navigationService.navigateTo(ChatAppViewRoute);
-                //Navigator.pop(context);
-              },
-              splashColor: Colors.blueAccent,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      Icons.chat,
-                      size: 40.0,
-                      color: Colors.blue[800],
-                    ),
-                    Text("Chat")
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.orange[100],
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
             child: InkWell(
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => BookingView1(),
+                    builder: (BuildContext context) => GpsVehicleView(),
                   )),
               splashColor: Colors.blueAccent,
               child: Center(
@@ -677,16 +645,139 @@ Widget getMenuForUserEmp(context) {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
-                      Icons.chat,
+                      Icons.not_listed_location,
                       size: 40.0,
                       color: Colors.blue[800],
                     ),
-                    Text("New Booking")
+                    Text("Vehicle GPS")
                   ],
                 ),
               ),
             ),
           ),
+          Card(
+            color: Colors.blue[100],
+            shadowColor: Colors.pink,
+            elevation: 10,
+            child: InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => KycUpdateView(),
+                  )),
+              splashColor: Colors.blueAccent,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.assignment,
+                      size: 40.0,
+                      color: Colors.blue[800],
+                    ),
+                    Center(
+                      child: Text("Know your Customer",
+                          style: TextStyle(fontSize: 10)),
+                    ),
+                    Text('KYC'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Card(
+          //   color: Colors.orange[100],
+          //   child: InkWell(
+          //     onTap: () {
+          //       _navigationService.navigateTo(FualUpdateViewRoute);
+          //       //Navigator.pop(context);
+          //     },
+          //     splashColor: Colors.blueAccent,
+          //     child: Center(
+          //       child: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: <Widget>[
+          //           Icon(
+          //             Icons.swap_calls,
+          //             size: 40.0,
+          //             color: Colors.blue[800],
+          //           ),
+          //           Text("Fual Details")
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Card(
+          //   color: Colors.orange[100],
+          //   child: InkWell(
+          //     onTap: () {
+          //       _navigationService.navigateTo(ChatAppViewRoute);
+          //       //Navigator.pop(context);
+          //     },
+          //     splashColor: Colors.blueAccent,
+          //     child: Center(
+          //       child: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: <Widget>[
+          //           Icon(
+          //             Icons.chat,
+          //             size: 40.0,
+          //             color: Colors.blue[800],
+          //           ),
+          //           Text("Chat")
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Card(
+          //   color: Colors.orange[100],
+          //   child: InkWell(
+          //     onTap: () => Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (BuildContext context) => BookingView1(),
+          //         )),
+          //     splashColor: Colors.blueAccent,
+          //     child: Center(
+          //       child: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: <Widget>[
+          //           Icon(
+          //             Icons.chat,
+          //             size: 40.0,
+          //             color: Colors.blue[800],
+          //           ),
+          //           Text("New Booking")
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Card(
+          //   color: Colors.blue[100],
+          //   shadowColor: Colors.pink,
+          //   elevation: 10,
+          //   child: InkWell(
+          //     onTap: () => Navigator.of(context)
+          //         .push(MaterialPageRoute(builder: (_) => ShopItemsPage())),
+          //     splashColor: Colors.blueAccent,
+          //     child: Center(
+          //       child: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: <Widget>[
+          //           Icon(
+          //             Icons.not_listed_location,
+          //             size: 40.0,
+          //             color: Colors.blue[800],
+          //           ),
+          //           Text("Test")
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     ),

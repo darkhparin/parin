@@ -219,6 +219,7 @@ class DashBoardDriverViewModel extends BaseModel {
       setdriverActiveTripModel(activeTrip);
       if (activeTrip != null) {
         continuousLocationSend();
+        getCanArriveTrip();
       }
     } catch (e) {
       seterrormsg(e.toString());
@@ -227,6 +228,30 @@ class DashBoardDriverViewModel extends BaseModel {
         description: _errormsg,
       );
     }
+  }
+
+  Future getCanArriveTrip() async {
+    try {
+      var canArriveTrip = await _apiService.driverAPIService
+          .getTripArriveResponce(_driverActiveTripModel.tripId);
+      setcanArriveTrip(canArriveTrip);
+      if (canArriveTrip != null) {
+        continuousLocationSend();
+      }
+    } catch (e) {
+      seterrormsg(e.toString());
+      await _dialogService.showDialog(
+        title: 'Error',
+        description: _errormsg,
+      );
+    }
+  }
+
+  int _canArriveTrip = 0;
+  int get canArriveTrip => _canArriveTrip;
+  void setcanArriveTrip(int value) {
+    _canArriveTrip = value;
+    notifyListeners();
   }
 
   continuousLocationSend() async {

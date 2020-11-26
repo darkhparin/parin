@@ -1,14 +1,19 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:cwl/models/application/index.dart';
 import 'package:cwl/models/branch/BranchModel.dart';
 import 'package:cwl/models/branch/BranchModel.dart';
 import 'package:cwl/ui/shared/progress_indicetor.dart';
 import 'package:cwl/ui/shared/ui_helpers.dart';
 import 'package:cwl/ui/views/guest_view.dart';
+import 'package:cwl/ui/widgets/blinking_text.dart';
 import 'package:cwl/ui/widgets/drawer.dart';
 import 'package:cwl/viewmodels/employee_trip_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider_architecture/_viewmodel_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BranchListView extends StatefulWidget {
   BranchListView({Key key}) : super(key: key);
@@ -16,7 +21,10 @@ class BranchListView extends StatefulWidget {
   _BranchListViewState createState() => _BranchListViewState();
 }
 
+Completer<GoogleMapController> _controller = Completer();
+
 class _BranchListViewState extends State<BranchListView> {
+  Set<Marker> markers = Set();
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<BranchListViewModel>.withConsumer(
@@ -24,17 +32,33 @@ class _BranchListViewState extends State<BranchListView> {
       onModelReady: (model) => model.handleStartUpLogic(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Branch Active Trip',
-            style: TextStyle(color: Colors.white),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            color: Colors.black,
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(Icons.arrow_back, color: Colors.orange),
           ),
-          centerTitle: true,
-          backgroundColor: Colors.blue[500],
+          title: Text(
+            'My Branch Active Trip',
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.orange,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(2.0, 2.0),
+                  blurRadius: 10.0,
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+          ),
           actions: <Widget>[
             // action button
             IconButton(
               icon: Icon(
                 Icons.home,
+                color: Colors.black,
               ),
               onPressed: () => Navigator.push(
                   context,
@@ -50,7 +74,8 @@ class _BranchListViewState extends State<BranchListView> {
           child: Column(
             children: <Widget>[
               getBrnaches(context, model),
-              model.busy ? showLoading() : branchTripList(context, model),
+              // model.busy ? showLoading() : branchTripList(context, model),
+              model.busy ? showLoading() : branchTripListNew(context, model),
             ],
           ),
         ),
@@ -68,13 +93,13 @@ class _BranchListViewState extends State<BranchListView> {
   Widget getBrnaches(context, BranchListViewModel model) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.lightBlue[50],
-      ),
+          // color: Colors.lightBlue[50],
+          ),
       margin: const EdgeInsets.fromLTRB(20, 10, 20, 5),
       height: 50,
       child: new DropdownButton<BranchModel>(
         value: model.branchlist,
-        hint: Text(' Select Branch'),
+        hint: Text(' Select Branch '),
         isExpanded: true,
         style: TextStyle(color: Colors.deepPurple),
         items: model.branchlists
@@ -109,6 +134,7 @@ Widget branchTripList(context, BranchListViewModel model) {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                     ),
+
                     // ExpansionTile(
                     //   title: Text("Harley-Davidson"),
                     //   subtitle: Text("  Explore the world of H-D"),
@@ -139,6 +165,7 @@ Widget branchTripList(context, BranchListViewModel model) {
                             color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
+
                       backgroundColor: Colors.blue[50],
                       tilePadding: EdgeInsets.all(5),
 
@@ -156,6 +183,7 @@ Widget branchTripList(context, BranchListViewModel model) {
                         size: 40.0,
                         color: Colors.blue,
                       ),
+
                       children: <Widget>[
                         Container(
                             height: 150,
@@ -240,21 +268,50 @@ Widget branchTripList(context, BranchListViewModel model) {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            RaisedButton(
-                              textColor: Colors.white,
-                              color: Colors.blue,
-                              onPressed: () {},
-                              child: Text("Departure"),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            RaisedButton(
-                              textColor: Colors.white,
-                              color: Colors.blue,
-                              onPressed: () {},
-                              child: Text("Arrive"),
-                            ),
+                            model.triplist[idx].latitude == null
+                                ? Icon(
+                                    Icons.location_off,
+                                    color: Colors.red,
+                                  )
+                                : RaisedButton.icon(
+                                    onPressed: () async {
+                                      var url =
+                                          'https://www.google.com/maps/search/?api=1&query=${model.triplist[idx].latitude},${model.triplist[idx].longitude}'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                      print(url);
+                                      if (await canLaunch(url)) {
+                                        await launch(url, forceSafariVC: false);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.location_on,
+                                      color: Colors.red,
+                                    ),
+                                    label: BlinkingText('Live Location'),
+                                  ),
+                            model.triplist[idx].latitude == null
+                                ? Icon(
+                                    Icons.location_off,
+                                    color: Colors.red,
+                                  )
+                                : RaisedButton.icon(
+                                    onPressed: () async {
+                                      var url =
+                                          'https://www.google.com/maps/dir/?api=1&origin=${model.triplist[idx].latitude},${model.triplist[idx].longitude}&destination=${model.triplist[idx].toLocation.latitude},${model.triplist[idx].toLocation.longitude}&travelmode=driving'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                      print(url);
+                                      if (await canLaunch(url)) {
+                                        await launch(url, forceSafariVC: false);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.directions,
+                                      color: Colors.blue,
+                                    ),
+                                    label: Text('Direction'),
+                                  ),
                           ],
                         ),
                       ],
@@ -286,4 +343,273 @@ Widget getUpDownTripIcon(bool isUpTrip) {
 
 Widget renderNodata() {
   return Container();
+}
+
+Widget branchTripListNew(context, BranchListViewModel model) {
+  return Padding(
+    padding: EdgeInsets.only(bottom: 16.0),
+    child: Stack(
+      children: <Widget>[
+        /// Item card
+        Container(
+          height: MediaQuery.of(context).size.height - 153,
+          child: ListView.builder(
+            itemCount: model?.triplist?.length,
+            itemBuilder: (BuildContext ctxt, int idx) {
+              return Card(
+                //   alignment: Alignment.topCenter,
+                child: SizedBox.fromSize(
+                  size: Size.fromHeight(250.0),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      /// Item description inside a material
+                      Container(
+                        margin: EdgeInsets.only(top: 24.0),
+                        child: Material(
+                          elevation: 14.0,
+                          borderRadius: BorderRadius.circular(12.0),
+                          shadowColor: Color(0x802196F3),
+                          color: Colors.transparent,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                              Color(0xFFDA4453),
+                              Color(0xFF89216B)
+                            ])),
+                            child: Padding(
+                              // padding: EdgeInsets.all(24.0),
+                              padding: EdgeInsets.fromLTRB(24, 18, 24, 80),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  /// Title and rating
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                          '${model.triplist[idx].origin} TO ${model.triplist[idx].destination}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                              '${model.triplist[idx].carrier} ',
+                                              style: TextStyle(
+                                                  color: Colors.amber,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.0)),
+                                          Icon(Icons.departure_board,
+                                              color: Colors.amber, size: 20.0),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text('${model.triplist[idx].status}',
+                                              style: TextStyle(
+                                                  color: Colors.amber,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 23.0)),
+                                          Icon(Icons.star,
+                                              color: Colors.amber, size: 24.0),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 9,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.location_on,
+                                              color: Colors.amber, size: 20.0),
+                                          model.triplist[idx].latitude != null
+                                              ? new GestureDetector(
+                                                  onTap: () async {
+                                                    var url =
+                                                        'https://www.google.com/maps/search/?api=1&query=${model.triplist[idx].latitude},${model.triplist[idx].longitude}'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                                    print(url);
+                                                    if (await canLaunch(url)) {
+                                                      await launch(url,
+                                                          forceSafariVC: false);
+                                                    } else {
+                                                      throw 'Could not launch $url';
+                                                    }
+                                                  },
+                                                  child: new Text(
+                                                    "Live Location ",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                          Icon(Icons.directions,
+                                              color: Colors.amber, size: 20.0),
+                                          model.triplist[idx].latitude != null
+                                              ? new GestureDetector(
+                                                  onTap: () async {
+                                                    var url =
+                                                        'https://www.google.com/maps/dir/?api=1&origin=${model.triplist[idx].latitude},${model.triplist[idx].longitude}&destination=${model.triplist[idx].isUpTrip == true ? model.triplist[idx].toLocation.latitude : model.triplist[idx].fromLocation.latitude},${model.triplist[idx].isUpTrip == true ? model.triplist[idx].toLocation.longitude : model.triplist[idx].fromLocation.longitude}&travelmode=driving'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                                    print(url);
+                                                    if (await canLaunch(url)) {
+                                                      await launch(url,
+                                                          forceSafariVC: false);
+                                                    } else {
+                                                      throw 'Could not launch $url';
+                                                    }
+                                                  },
+                                                  child: new Text(
+                                                    " Direction",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+
+                                  /// Infos
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text('Date: ${model.triplist[idx].date}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: Text('',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700)),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: Material(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.greenAccent[900],
+                                          child: Padding(
+                                            padding: EdgeInsets.all(4.0),
+                                            child: Text(
+                                                '${model.triplist[idx].tcvlhc}',
+                                                style: TextStyle(
+                                                    color: Colors.red)),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: Material(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.green,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(4.0),
+                                            child: Text(
+                                                'Trip ${model.triplist[idx].isUpTrip == true ? 'UP' : 'Down'}',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      /// Item image
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 16.0),
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(54.0),
+                            child: Material(
+                              elevation: 20.0,
+                              shadowColor: Color(0x802196F3),
+                              shape: CircleBorder(),
+
+                              child: Icon(
+                                model.triplist[idx].modeId == 1
+                                    ? Icons.flight
+                                    : model.triplist[idx].modeId == 2
+                                        ? Icons.directions_subway
+                                        : Icons.local_shipping,
+                                size: 70.0,
+                                color: Colors.orange[800],
+                              ),
+                              // child: Image.asset('res/shoes1.png'),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 180, 40, 0),
+                        child: Material(
+                          elevation: 12.0,
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(20.0),
+                            bottomLeft: Radius.circular(20.0),
+                            bottomRight: Radius.circular(20.0),
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 4.0),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.purple,
+                                child: Text('TRIP'),
+                              ),
+                              title: Text('${model.triplist[idx].resource}'),
+                              subtitle: Text(
+                                  'OriginTime: ${model.triplist[idx].originTime == null ? '' : model.triplist[idx].originTime}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              /// Review
+            },
+          ),
+        ),
+      ],
+    ),
+  );
 }

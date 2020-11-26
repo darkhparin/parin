@@ -13,6 +13,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="CWL India"
         android:icon="@mipmap/ic_cwl_icon">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyAmmZf6dpF89u9n3BMU4Qml8_-iP0UQJAI"/>
 
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"

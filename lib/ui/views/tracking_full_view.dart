@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:provider_architecture/provider_architecture.dart';
 import 'package:cwl/services/navigation_service.dart';
 import 'package:cwl/locator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'guest_view.dart';
 
@@ -23,7 +24,8 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<DocketTrackingViewModel>.withConsumer(
-      viewModel: DocketTrackingViewModel(),
+      viewModelBuilder: () => DocketTrackingViewModel(),
+      onModelReady: (model) => model.handleStartUpLogic(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
@@ -126,30 +128,70 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           new Padding(
                             padding: new EdgeInsets.all(0.0),
                             child: Text(
-                              'DWB ${model.docketresponce.code}',
+                              'DWB ${model.docketresponce.code} ',
                               style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          new Padding(
-                            padding: new EdgeInsets.fromLTRB(0, 0, 2, 0),
-                            child: new Text(
-                              '  (Q: ${model.docketresponce.qty})',
-                              style: new TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.green,
-                              ),
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ),
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: new Text(
-                              ' ${model.docketresponce.mode}',
+                              '(Q: ${model.docketresponce.qty})',
                               style: new TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.green,
                               ),
                             ),
+                          ),
+                          new Padding(
+                            padding: new EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: new Text(
+                              '${model.docketresponce.mode}',
+                              style: new TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              model.transhipmentDetails.last.longitude != null
+                                  ? IconButton(
+                                      icon: new Icon(
+                                        Icons.location_on,
+                                        color: Colors.red,
+                                        size: 29,
+                                      ),
+                                      onPressed: () async {
+                                        var url =
+                                            'https://www.google.com/maps/search/?api=1&query=${model.transhipmentDetails.last.latitude},${model.transhipmentDetails.last.longitude}'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                        print(url);
+                                        if (await canLaunch(url)) {
+                                          await launch(url,
+                                              forceSafariVC: false);
+                                        } else {
+                                          throw 'Could not launch $url';
+                                        }
+                                      },
+                                    )
+                                  : IconButton(
+                                      icon: new Icon(
+                                        Icons.location_off,
+                                        color: Colors.red,
+                                        size: 29,
+                                      ),
+                                      onPressed: () {},
+                                    ),
+
+                              // Icon(
+                              //   Icons.location_on,
+                              //   color: Colors.deepOrangeAccent,
+                              // ),
+                              Text(
+                                'Location',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ],
                           ),
                         ],
                       )),
@@ -311,8 +353,9 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 20, 20),
                             // child: RaisedButton(
+
                             child: Text(
-                              '  ${model.docketresponce.dwbStatus} ',
+                              '${model.docketresponce.dwbStatus} ',
                               style: TextStyle(
                                   color: Colors.redAccent,
                                   fontWeight: FontWeight.bold),
@@ -394,7 +437,7 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                                     padding:
                                         new EdgeInsets.fromLTRB(0, 0, 0, 0),
                                     child: new Text(
-                                      ' In ${model.transhipmentDetails[idx].vehicle}',
+                                      ' In ${model.transhipmentDetails[idx].vehicle} ',
                                       style: new TextStyle(
                                         fontSize: 17.0,
                                         color: Colors.green,
@@ -466,10 +509,10 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           ),
                         ],
                       ),
-                      Image.asset(
-                        "",
-                        height: double.infinity,
-                      )
+                      // Image.asset(
+                      //   "",
+                      //   height: double.infinity,
+                      // )
                     ],
                   ),
                 ),

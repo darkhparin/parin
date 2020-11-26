@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cwl/models/GPS/GPSRequestModel.dart';
 import 'package:cwl/models/application/index.dart';
 import 'package:http/http.dart' as http;
 
@@ -308,6 +309,23 @@ class TripAPIService {
       var result = TripDetailsListModel.fromJson(json.decode(response.body))
           .tripdetailsList;
       return result;
+    } else {
+      throw new Exception(response.body);
+    }
+  }
+
+  /// GPS API Request Responce  Responce
+  Future<GpsResponceModel> getGPSResponce(GpsRequestModel model) async {
+    var response = await _client.post(
+      'http://172.104.46.37/api/getAllMyLastData',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: json.encode(model.toJson()),
+    );
+    if (response.statusCode == 200) {
+      return GpsResponceModel.fromJson(json.decode(response.body));
     } else {
       throw new Exception(response.body);
     }

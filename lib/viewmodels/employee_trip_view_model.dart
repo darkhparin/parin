@@ -1,12 +1,10 @@
-import 'dart:convert';
-
-import 'package:cwl/constants/route_names.dart';
+import 'package:cwl/models/GPS/GPSRequestModel.dart';
 import 'package:cwl/models/masterindex.dart';
 import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/navigation_service.dart';
-import 'package:package_info/package_info.dart';
-
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import '../locator.dart';
 import 'base_model.dart';
 
@@ -22,11 +20,39 @@ class BranchListViewModel extends BaseModel {
       var userBranchesResponce =
           await _apiService.tripAPIService.getUserBranchesResponce();
       setbranchlists(userBranchesResponce);
+      getGPSResponce();
+      // List ewList1 = new List.from([BranchModel])..addAll([AllLastLocation]);
+      // print(ewList1);
+
       setBusy(false);
     } catch (e) {
       setBusy(false);
     }
   }
+
+//GPS API Call
+  Future getGPSResponce() async {
+    try {
+      GpsRequestModel model = new GpsRequestModel();
+      model.userId = 1004;
+      var gpsResponce = await _apiService.tripAPIService.getGPSResponce(model);
+      setgpsresponce(gpsResponce.allLastLocation);
+    } catch (e) {
+      await _dialogService.showDialog(
+        title: 'Error',
+        description: e.toString(),
+      );
+    }
+  }
+
+  List<AllLastLocation> _gpslist = new List<AllLastLocation>();
+  List<AllLastLocation> get gpslist => _gpslist;
+  void setgpsresponce(List<AllLastLocation> model) {
+    _gpslist = model == null ? new List<AllLastLocation>() : model;
+    notifyListeners();
+  }
+
+// GPS API CAll
 
   List<BranchModel> _branchlists = new List<BranchModel>();
   List<BranchModel> get branchlists => _branchlists;
@@ -58,8 +84,24 @@ class BranchListViewModel extends BaseModel {
 
   List<TripDetailsModel> _triplist = new List<TripDetailsModel>();
   List<TripDetailsModel> get triplist => _triplist;
-  void settriplist(List<TripDetailsModel> val) {
+  Future<void> settriplist(List<TripDetailsModel> val) async {
     _triplist = val == null ? new List<TripDetailsModel>() : val;
+
+    if (_triplist.length > 0 && _gpslist.length > 0) {
+      for (var gp in _gpslist) {
+        var myData = new TripDetailsModel();
+        try {
+          myData = _triplist.where((tl) => tl.carrier == gp.vehName).first;
+        } catch (e) {
+          myData = null;
+        }
+
+        if (myData != null) {
+          myData.latitude = num.parse(gp.latitute);
+          myData.longitude = num.parse(gp.longitude);
+        }
+      }
+    }
     notifyListeners();
   }
 
@@ -73,16 +115,6 @@ class BranchListViewModel extends BaseModel {
       setBusy(false);
       if (tripListResponce != null) {
         sethasData(true);
-        // var responce = await _dialogService.showConfirmationDialog(
-        //   title: 'Success',
-        //   // description: 'Success',
-        //   confirmationTitle: 'OK',
-        //   description: json.encode(tripListResponce.toList()),
-        // );
-
-        // if (responce.confirmed) {
-        //   _navigationService.navigateReplacementTo(DashBoardDriverViewRoute);
-        // }
       }
     } catch (e) {
       setBusy(false);

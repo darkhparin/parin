@@ -24,6 +24,8 @@ const String DocketTrackingFullPageViewRoute = "DocketTrackingViewView";
 const String ChatAppViewRoute = "ChatApp";
 const String BranchListViewRoute = "BranchListView";
 const String TripDepartDriverViewRoute = "TripDepartDriverView";
+const String GPSViewAllViewRoute = "GpsVehicleView";
+const String KycUpdateViewRoute = "KycUpdateView";
 
 // DashBoards
 const String DashBoardDriverViewRoute = "DashBoardDriverView";

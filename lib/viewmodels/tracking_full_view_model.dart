@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cwl/locator.dart';
+import 'package:cwl/models/GPS/GPSRequestModel.dart';
 import 'package:cwl/models/masterindex.dart';
 import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
@@ -13,6 +14,42 @@ class DocketTrackingViewModel extends BaseModel {
   final ApiService _apiService = locator<ApiService>();
   final DialogService _dialogService = locator<DialogService>();
   final NavigationService _navigationService = locator<NavigationService>();
+
+  Future handleStartUpLogic() async {
+    try {
+      setBusy(true);
+
+      getGPSResponce();
+
+      setBusy(false);
+    } catch (e) {
+      setBusy(false);
+    }
+  }
+
+  //GPS API Call
+  Future getGPSResponce() async {
+    try {
+      GpsRequestModel model = new GpsRequestModel();
+      model.userId = 1004;
+      var gpsResponce = await _apiService.tripAPIService.getGPSResponce(model);
+      setgpsresponce(gpsResponce.allLastLocation);
+    } catch (e) {
+      await _dialogService.showDialog(
+        title: 'Error',
+        description: e.toString(),
+      );
+    }
+  }
+
+  List<AllLastLocation> _gpslist = new List<AllLastLocation>();
+  List<AllLastLocation> get gpslist => _gpslist;
+  void setgpsresponce(List<AllLastLocation> model) {
+    _gpslist = model == null ? new List<AllLastLocation>() : model;
+    notifyListeners();
+  }
+
+// GPS API CAll
 
   OrderTrackingFullModel _docketresponce;
   OrderTrackingFullModel get docketresponce => _docketresponce;
@@ -33,6 +70,30 @@ class DocketTrackingViewModel extends BaseModel {
   void settranshipmentDetailsresponce(List<OrderTrackingFullModeltsd> val) {
     _transhipmentDetails =
         val == null ? new List<OrderTrackingFullModeltsd>() : val;
+
+    if (_transhipmentDetails.length > 0 && _gpslist.length > 0) {
+      for (var gp in _gpslist) {
+        var myData = new OrderTrackingFullModeltsd();
+        try {
+          myData = _transhipmentDetails
+              .where((td) => td.vehicle == gp.vehName)
+              .first;
+        } catch (e) {
+          myData = null;
+        }
+
+        if (myData != null) {
+          myData.latitude = num.parse(gp.latitute);
+          myData.longitude = num.parse(gp.longitude);
+        }
+      }
+    }
+
+    // var ascending = _transhipmentDetails
+    //   ..sort((a, b) => a.sequenceNr.compareTo(b.qty));
+
+    // _transhipmentDetails = ascending.reversed;
+
     notifyListeners();
   }
 

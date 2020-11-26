@@ -174,10 +174,10 @@ class TripUpdateDriverViewModel extends BaseModel {
       setloadDetailsList(null);
       setBusy(false);
       seterrormsg(e.toString());
-      await _dialogService.showDialog(
-        title: 'Error',
-        description: _errormsg,
-      );
+      // await _dialogService.showDialog(
+      //   title: 'Error1',
+      //   description: _errormsg,
+      // );
     }
   }
 
