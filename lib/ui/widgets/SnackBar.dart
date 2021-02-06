@@ -19,3 +19,12 @@ Widget rtoastMassageRed(String msg) {
       backgroundColor: Colors.red,
       textColor: Colors.white);
 }
+
+Widget r(String msg) {
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white);
+}
