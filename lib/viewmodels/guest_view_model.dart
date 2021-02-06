@@ -5,6 +5,7 @@ import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/navigation_service.dart';
 import 'package:cwl/ui/shared/progress_indicetor.dart';
+import 'package:cwl/ui/widgets/SnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:package_info/package_info.dart';
@@ -36,6 +37,7 @@ class GuestViewModel extends BaseModel {
     notifyListeners();
     if (checkTodaysAttendance == false) {
       // await getLastAttendance();
+      rtoastMassageRed('Your Attendance Pending');
     }
   }
 
@@ -153,6 +155,7 @@ class GuestViewModel extends BaseModel {
       setpostAttendanceRequestResponce(postAttendanceRequestResponce);
       if (postAttendanceRequestResponce == true) {
         _navigationService.navigateReplacementTo(GuestViewRoute);
+        rtoastMassage('Attendance Punch Successfully');
       } else {
         setBusy(true);
       }
@@ -185,8 +188,12 @@ class GuestViewModel extends BaseModel {
       var checkTodaysAttendance =
           await _apiService.accountAPIService.checkTodaysAttendanceCompleted();
       setcheckTodaysAttendance(checkTodaysAttendance);
+      var userdetailsResponce =
+          await _apiService.accountAPIService.getUserDetails();
+      setuserdetails(userdetailsResponce);
 
       await setappVersion();
+
       setBusy(false);
     } catch (e) {
       setBusy(false);
@@ -196,5 +203,11 @@ class GuestViewModel extends BaseModel {
         description: _errormsg,
       );
     }
+  }
+
+  Userdetails _userdetails;
+  Userdetails get userdetails => _userdetails;
+  void setuserdetails(Userdetails value) {
+    _userdetails = value;
   }
 }

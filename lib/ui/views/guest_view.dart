@@ -6,6 +6,7 @@ import 'package:cwl/services/api_services.dart';
 import 'package:cwl/ui/shared/progress_indicetor.dart';
 import 'package:cwl/ui/views/Driver_Fual_update_view.dart';
 import 'package:cwl/ui/views/KYC_Update_view.dart';
+import 'package:cwl/ui/views/Kyc_Verify_view.dart';
 import 'package:cwl/ui/views/Pincode_Serviceability_view.dart';
 import 'package:cwl/ui/views/booking_view_new_design.dart';
 import 'package:cwl/ui/views/gps_View_all.dart';
@@ -74,10 +75,18 @@ class _GuestViewState extends State<GuestView> {
             // action button
             IconButton(
               tooltip: 'Search Pincode',
-              icon: Icon(
-                Icons.location_on,
-                color: Colors.yellow[500],
-                size: 30,
+              icon: Column(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    color: Colors.yellow[500],
+                    size: 28,
+                  ),
+                  Text(
+                    'Pincode',
+                    style: TextStyle(fontSize: 10),
+                  )
+                ],
               ),
               onPressed: () {
                 _navigationService.navigateTo(PincodeServiceabilityRoute);
@@ -381,10 +390,21 @@ Widget homeScreeTopPart(BuildContext context) {
                     _navigationService.navigateTo(RateCalcViewRoute);
                     //Navigator.pop(context);
                   },
-                  child: Icon(
-                    Icons.exposure,
-                    size: 30,
-                    color: Color(0xFFE52020),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.exposure,
+                        size: 30,
+                        color: Color(0xFFE52020),
+                      ),
+                      Text(
+                        'Rate Calc',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            letterSpacing: -0.3),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(
@@ -401,7 +421,7 @@ Widget homeScreeTopPart(BuildContext context) {
                         _navigationService.navigateTo(DocketSearchViewRoute);
                       }
                     },
-                    color: Colors.green[500],
+                    color: Colors.orange[300],
                     padding:
                         EdgeInsets.symmetric(vertical: 15.0, horizontal: 60.0),
                     child: Row(
@@ -451,17 +471,61 @@ Widget homeScreenBottomPart(BuildContext context) {
                 style: TextStyle(
                     fontSize: 22.0, fontFamily: "SF-Pro-Display-Bold"),
               ),
-              _apiService.userdetails.userTypeId == 2
-                  ? FlatButton(
-                      child: Text(
-                        "CWL Employee",
-                      ),
-                      onPressed: () {},
-                    )
-                  : FlatButton(
-                      child: Text("CWL Driver"),
-                      onPressed: () {},
+              _apiService.userdetails.employeeId == 1248 ||
+                      _apiService.userdetails.employeeId == 1 ||
+                      _apiService.userdetails.employeeId == 96 ||
+                      _apiService.userdetails.employeeId == 1214 ||
+                      _apiService.userdetails.employeeId == 2364 ||
+                      _apiService.userdetails.employeeId == 1176
+                  ? kycVerify()
+                  : SizedBox(
+                      height: 0,
                     ),
+
+              _apiService.userdetails.employeeId == 1176 ||
+                      _apiService.userdetails.employeeId == 22 ||
+                      _apiService.userdetails.employeeId == 516
+                  ? bankAccountVerify()
+                  : SizedBox(
+                      height: 0,
+                    ),
+
+              // _apiService.userdetails.employeeId == 1248
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              // _apiService.userdetails.employeeId == 2364
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              // _apiService.userdetails.employeeId == 1
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              // _apiService.userdetails.employeeId == 96
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              // _apiService.userdetails.employeeId == 1214
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              // _apiService.userdetails.employeeId == 1176
+              //     ? kycVerify()
+              //     : SizedBox(
+              //         height: 0,
+              //       ),
+              //  FlatButton(
+              //     child: Text(
+              //       "CWL Employee",
+              //     ),
+              //     onPressed: () {},
+              //   )
             ],
           ),
         ),
@@ -496,6 +560,7 @@ Widget homeScreenBottomPart(BuildContext context) {
 
 Widget getMenuForUserEmp(context) {
   final NavigationService _navigationService = locator<NavigationService>();
+  final ApiService _apiService = locator<ApiService>();
   return FadeAnimation(
     0.5,
     Container(
@@ -521,7 +586,7 @@ Widget getMenuForUserEmp(context) {
                     Icon(
                       Icons.add_photo_alternate,
                       size: 40.0,
-                      color: Colors.orange[800],
+                      color: Colors.blue[800],
                     ),
                     Text("Booking")
                   ],
@@ -595,7 +660,7 @@ Widget getMenuForUserEmp(context) {
                     Icon(
                       Icons.cloud_upload,
                       size: 40.0,
-                      color: Colors.orange[800],
+                      color: Colors.blue[800],
                     ),
                     Text("Delivery")
                   ],
@@ -621,7 +686,7 @@ Widget getMenuForUserEmp(context) {
                     Icon(
                       Icons.assignment_turned_in,
                       size: 40.0,
-                      color: Colors.orange[800],
+                      color: Colors.blue[800],
                     ),
                     Text("Branch Trip")
                   ],
@@ -685,6 +750,7 @@ Widget getMenuForUserEmp(context) {
               ),
             ),
           ),
+
           // Card(
           //   color: Colors.orange[100],
           //   child: InkWell(
@@ -781,6 +847,26 @@ Widget getMenuForUserEmp(context) {
         ],
       ),
     ),
+  );
+}
+
+Widget kycVerify() {
+  final NavigationService _navigationService = locator<NavigationService>();
+  return FlatButton(
+    child: Text(
+      "Verify KYC",
+    ),
+    onPressed: () => _navigationService.navigateTo(KycVerifyViewRoute),
+  );
+}
+
+Widget bankAccountVerify() {
+  final NavigationService _navigationService = locator<NavigationService>();
+  return FlatButton(
+    child: Text(
+      "Bank Verify",
+    ),
+    onPressed: () => _navigationService.navigateTo(BankAccountViewRoute),
   );
 }
 

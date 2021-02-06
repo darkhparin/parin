@@ -1,31 +1,26 @@
-import 'dart:async';
 import 'dart:ui';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cwl/models/application/index.dart';
-import 'package:cwl/models/branch/BranchModel.dart';
-import 'package:cwl/models/branch/BranchModel.dart';
 import 'package:cwl/ui/shared/progress_indicetor.dart';
 import 'package:cwl/ui/shared/ui_helpers.dart';
 import 'package:cwl/ui/views/guest_view.dart';
-import 'package:cwl/ui/widgets/blinking_text.dart';
 import 'package:cwl/ui/widgets/busy_button.dart';
-import 'package:cwl/ui/widgets/drawer.dart';
 import 'package:cwl/ui/widgets/input_field.dart';
-import 'package:cwl/viewmodels/KYC_Update_view_model.dart';
-import 'package:cwl/viewmodels/employee_trip_view_model.dart';
+import 'package:cwl/viewmodels/Kyc_Verify_View_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider_architecture/_viewmodel_provider.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class KycUpdateView extends StatefulWidget {
+class KycverifyedViewView extends StatefulWidget {
   @override
-  _KycUpdateViewState createState() => _KycUpdateViewState();
+  _KycverifyedViewViewState createState() => _KycverifyedViewViewState();
 }
 
-class _KycUpdateViewState extends State<KycUpdateView> {
+Map<String, String> selectedValueMap = Map();
+
+class _KycverifyedViewViewState extends State<KycverifyedViewView> {
   final gstNoController = TextEditingController();
   final contactPersonController = TextEditingController();
   final emailController = TextEditingController();
@@ -39,23 +34,23 @@ class _KycUpdateViewState extends State<KycUpdateView> {
       new GlobalKey<AutoCompleteTextFieldState<Commonmodel>>();
 
   bool isChecked = false;
-  @override
   AutoCompleteTextField _productTypeAutoFill;
+  @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<KycUpdateViewModel>.withConsumer(
-      viewModelBuilder: () => KycUpdateViewModel(),
+    return ViewModelProvider<KycverifyedViewModel>.withConsumer(
+      viewModelBuilder: () => KycverifyedViewModel(),
       onModelReady: (model) => model.handleStartUpLogic(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
-          leading: IconButton(
-            color: Colors.black,
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back, color: Colors.orange),
-          ),
+          // leading: IconButton(
+          //   color: Colors.black,
+          //   onPressed: () => Navigator.of(context).pop(),
+          //   icon: Icon(Icons.arrow_back, color: Colors.orange),
+          // ),
           title: Text(
-            'Know Your Customer KYC',
+            'Verify Customer KYC',
             style: TextStyle(
               fontSize: 22,
               color: Colors.blue,
@@ -89,10 +84,6 @@ class _KycUpdateViewState extends State<KycUpdateView> {
           child: Column(
             children: <Widget>[
               model.busy ? showLoading() : getPartys(context, model),
-              getPartysTest(context, model),
-              model.partySearch.length > 0
-                  ? getpartysSearch(model)
-                  : renderNodata(),
               model.partyContect.gstin == null
                   ? renderNodata()
                   : partyDetailsEdit(model),
@@ -115,7 +106,7 @@ class _KycUpdateViewState extends State<KycUpdateView> {
     );
   }
 
-  Widget getPartys(context, KycUpdateViewModel model) {
+  Widget getPartys(context, KycverifyedViewModel model) {
     return Container(
       decoration: BoxDecoration(
           //  color: Colors.lightBlue[50],
@@ -131,7 +122,31 @@ class _KycUpdateViewState extends State<KycUpdateView> {
             .map<DropdownMenuItem<Commonmodel>>((Commonmodel value) {
           return DropdownMenuItem<Commonmodel>(
             value: value,
-            child: Text(value.name),
+            child: Row(
+              children: [
+                // FlatButton(
+                //     child: Text(
+                //       "Reject",
+                //       style: TextStyle(color: Colors.red),
+                //     ),
+                //     onPressed: () {}),
+                new GestureDetector(
+                  onTap: () {
+                    model.setpartyLatestListReject(value);
+                  },
+                  child: new Text(
+                    "Reject - ",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Text(
+                  '${value.name}',
+                ),
+              ],
+            ),
           );
         }).toList(),
         onChanged: (Commonmodel value) {
@@ -142,100 +157,7 @@ class _KycUpdateViewState extends State<KycUpdateView> {
     );
   }
 
-  Widget getPartysTest(context, KycUpdateViewModel model) {
-    return Container(
-      child: InputField(
-        placeholder: 'Search Customer (Party)',
-        controller: null,
-        textInputType: TextInputType.text,
-        onChanged: (text) {
-          model.search(text);
-        },
-      ),
-    );
-  }
-
-  Widget getpartysSearch(KycUpdateViewModel model) {
-    return Container(
-      height: 500,
-      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
-      child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: model.partySearch.length,
-          itemBuilder: (context, index) {
-            return Container(
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: Card(
-                elevation: 20,
-                // color: Colors.lightGreen[100],
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(6))),
-                margin: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-                  child: GestureDetector(
-                    onTap: () {
-                      model
-                          .getPartyContactDetails1(model.partySearch[index].id);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Padding(
-                            padding: new EdgeInsets.all(10.0),
-                            child: new Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                // new Padding(
-                                //   padding: new EdgeInsets.all(0.0),
-                                //   child: new Icon(
-                                //     Icons.home,
-                                //     color: Colors.blue,
-                                //   ),
-                                // ),
-                                new Padding(
-                                  padding: new EdgeInsets.all(0.0),
-                                  child: Text(
-                                    ' ${model.partySearch[index].name}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-    );
-  }
-
-  Widget partyDetailsEdit(KycUpdateViewModel model) {
-    // gstNoController.text =
-    //     model.partyContect != null ? model.partyContect.gstin : '';
-
-    // contactPersonController.text =
-    //     model.partyContect != null ? model.partyContect.contactPerson : '';
-
-    // emailController.text =
-    //     model.partyContect != null ? model.partyContect.emailId : '';
-    // var aaa = model.partyContect.mobileNo.toString();
-    // mobileController.text = model.partyContect != null ? aaa : '';
-    // officenumberController.text =
-    //     model.partyContect != null ? model.partyContect.officeNo : '';
-    // addressController.text =
-    //     model.partyContect != null ? model.partyContect.address : '';
-    // var partypincode = model.partyContect.pincode.toString();
-    // partyPincodeController.text =
-    //     model.partyContect != null ? partypincode : '';
-
+  Widget partyDetailsEdit(KycverifyedViewModel model) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Column(
@@ -247,28 +169,15 @@ class _KycUpdateViewState extends State<KycUpdateView> {
           Row(
             children: [
               Text(
-                'Branch: ${model.partyContect.branch}-${model.partyContect.branchPincode} ',
+                'Branch: ${model.partyContect.branch}-${model.partyContect.branchPincode}',
                 style: TextStyle(
                   fontSize: 15,
-                  color: model.isDeleted == true ? Colors.orange : Colors.green,
+                  color: Colors.orange,
                 ),
               ),
             ],
           ),
 
-          // Image.network(
-          //     'https://image.freepik.com/free-vector/kyc-know-your-customer-concept-idea-business-identification-finance-safety-cyber-crime_277904-5395.jpg'),
-          Center(
-              // child: Text(
-              //   'Branch: ${model.partyContect.branch}-${model.partyContect.branchPincode}',
-              //   style: TextStyle(
-              //     fontSize: 20,
-              //     color: Colors.orange,
-              //   ),
-              // ),
-              ),
-          // verticalSpaceSmall,
-          // Text('GST No'),
           Row(
             children: <Widget>[
               Expanded(
@@ -280,9 +189,7 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                   isReadOnly: model.partyContect.gstin != null ? true : false,
                   textInputType: TextInputType.number,
                   textInputAction: TextInputAction.next,
-                  onChanged: (text) {
-                    model.setgstin(text);
-                  },
+                  onChanged: (text) {},
                   // validationMessage: model.errordocketno,
                 ),
               ),
@@ -297,9 +204,8 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                   placeholder: '${model.partyContect.contactPerson}',
                   controller: contactPersonController,
                   textInputType: TextInputType.text,
-                  onChanged: (value) {
-                    model.setcontactPerson(value);
-                  },
+                  isReadOnly: true,
+                  onChanged: (value) {},
                   validationMessage:
                       '${model.partyContect.contactPerson == null ? 'Enter ContactPerson Name' : ''}',
                 ),
@@ -319,11 +225,10 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                       '${model.partyContect.emailId == null ? 'Enter Email ID' : model.partyContect.emailId}',
                   controller: emailController,
                   // initialValue: '${model.email}',
+                  isReadOnly: true,
                   textInputType: TextInputType.text,
                   textInputAction: TextInputAction.next,
-                  onChanged: (text) {
-                    model.setemail(text);
-                  },
+                  // onChanged: (text) {},
                   validationMessage:
                       '${model.partyContect.emailId == null ? emailController.text.length < 10 ? '* Enter Email ID ' : '' : ''}',
                 ),
@@ -336,7 +241,6 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                   onChanged: (value) {
                     setState(() {
                       model.partyContect.hasEmailAlert = value;
-                      model.sethasEmailAlert(value);
                     });
                   },
                 ),
@@ -374,11 +278,10 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                   placeholder: '${model.partyContect.mobileNo}',
                   controller: mobileController,
                   //initialValue: '${model.partyContect.mobileNo}',
+                  isReadOnly: true,
                   textInputType: TextInputType.number,
                   textInputAction: TextInputAction.next,
-                  onChanged: (text) {
-                    model.setmobileNo(text);
-                  },
+                  // onChanged: (text) {},
                   validationMessage:
                       '${model.partyContect.mobileNo == null ? mobileController.text.length < 10 ? '* Enter Mobile Number ' : '' : ''}',
                 ),
@@ -391,7 +294,6 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                   onChanged: (value) {
                     setState(() {
                       model.partyContect.hasSmsAlert = value;
-                      model.sethasSMSAlert(value);
                     });
                   },
                 ),
@@ -427,107 +329,79 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                       '${model.partyContect.officeNo == null ? 'Enter Office Number' : model.partyContect.officeNo}',
                   controller: officenumberController,
                   textInputType: TextInputType.number,
-                  onChanged: (text) {
-                    model.setofficeNo(text);
-                  },
+                  isReadOnly: true,
+                  onChanged: (text) {},
                   validationMessage:
                       '${model.partyContect.officeNo == null ? officenumberController.text.length < 10 ? '* Enter Office Number' : '' : ''}',
                 ),
               ),
             ],
           ),
-          // verticalSpaceSmall,
-          // Text(
-          //   'Address',
-          //   style: TextStyle(fontWeight: FontWeight.bold),
-          // ),
+
           Text("""${model.partyContect.address}""",
               style: TextStyle(fontSize: 13)),
+
           Row(
             children: <Widget>[
-              Expanded(
-                child: InputField(
-                  placeholder: 'If Change Address Type Hear (Full Address)',
-                  controller: addressController,
-                  textInputAction: TextInputAction.next,
-                  onChanged: (text) {
-                    model.setaddress(text);
-                  },
-                  // validationMessage: model.errordocketno,
-                ),
-              ),
-            ],
-          ),
-          // verticalSpaceSmall,
-          // Text('Party Pincode'),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: InputField(
-                  formatter: LengthLimitingTextInputFormatter(11),
-                  placeholder: 'Pincode: ${model.partyContect.pincode}',
-                  controller: partyPincodeController,
-                  textInputType: TextInputType.number,
-                  onChanged: (text) {
-                    model.setpartyPincode(text);
-                  },
-                  // validationMessage: model.errordocketno,
-                ),
-              ),
-              Text('  ODA Applicable ?'),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                child: Checkbox(
-                  value: model.partyContect.isOda,
-                  onChanged: (value) {
-                    setState(() {
-                      model.partyContect.isOda = value;
-                      model.setisODA(value);
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          // verticalSpaceMedium,
-          // Text('Select Product Type'),
-          getProductTypesDropDown(model),
-          model.productType != null
-              ? getProductType(model.productType.name)
-              : Container(
-                  height: 0,
-                  width: 0,
-                ),
-          Text(
-            '${model.productType == null ? '* Select Product Type' : ''}',
-            style: TextStyle(color: Colors.red, fontSize: 12),
-          ),
-          verticalSpaceMedium,
-          Row(
-            children: <Widget>[
-              Text(
-                "  Delete Party",
-                style: TextStyle(
-                  color: model.isDeleted == true ? Colors.orange : Colors.green,
-                ),
-              ),
+              Text('Send UserID And Pass on Customer Mail'),
               Switch(
                 value: model.partyContect.isDeleted,
                 onChanged: (value) {
                   setState(() {
                     model.partyContect.isDeleted = value;
-                    model.setisDeleted(value);
+                    model.setisTesting(value);
                   });
                 },
                 //
-                activeTrackColor: Colors.orange,
-                activeColor: Colors.red,
-                inactiveTrackColor: Colors.green[300],
+                activeTrackColor: Colors.green,
+                activeColor: Colors.green,
+                inactiveTrackColor: Colors.orange[300],
+              ),
+            ],
+          ),
+
+          Text(
+            '${model.productType == null ? '* Select Product Type' : ''}',
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+          verticalSpaceTiny,
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: InputField(
+                  formatter: LengthLimitingTextInputFormatter(11),
+                  placeholder: 'Enter First Name',
+                  controller: null,
+                  onChanged: (text) {
+                    model.setfirstcontact(text);
+                  },
+                  validationMessage:
+                      '* ${model.firstname == null ? 'Provide First Name' : ''}',
+                ),
+              ),
+              SizedBox(
+                width: 5,
               ),
               Expanded(
-                child: model.productType == null
+                child: InputField(
+                  formatter: LengthLimitingTextInputFormatter(11),
+                  placeholder: 'Enter Last Name',
+                  controller: null,
+                  onChanged: (text) {
+                    model.setlastName(text);
+                  },
+                  validationMessage:
+                      '* ${model.lastName == null ? 'Provide Last Name' : ''}',
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: model.firstname == null
                     ? BusyButton(
-                        title: 'Submit KYC',
+                        title: 'Approved KYC',
                         enabled: false,
                         busy: model.busy,
                         onPressed: () async {
@@ -535,13 +409,26 @@ class _KycUpdateViewState extends State<KycUpdateView> {
                         },
                       )
                     : BusyButton(
-                        title: 'Submit KYC',
+                        title: 'Approved KYC',
                         enabled: true,
                         busy: model.busy,
                         onPressed: () async {
-                          model.saveKYCDetails();
+                          model.saveVerifyKYC();
                         },
                       ),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                child: BusyButton(
+                  title: 'Reject KYC',
+                  enabled: true,
+                  busy: model.busy,
+                  onPressed: () async {
+                    model.saveRejectKYC();
+                  },
+                ),
               ),
             ],
           ),
@@ -550,30 +437,6 @@ class _KycUpdateViewState extends State<KycUpdateView> {
       ),
     );
   }
-
-  // Widget getProductTypesDropDown(KycUpdateViewModel model) {
-  //   return Container(
-  //     height: 50,
-  //     child: new DropdownButton<Commonmodel>(
-  //       // value: model.productType,
-  //       value: model.productType,
-  //       isExpanded: true,
-  //       hint: Text('Select Product Type'),
-  //       style: TextStyle(color: Colors.deepPurple),
-  //       items: model.productTypes
-  //           .map<DropdownMenuItem<Commonmodel>>((Commonmodel value) {
-  //         return DropdownMenuItem<Commonmodel>(
-  //           value: value,
-  //           child: Text(value.name.toString()),
-  //         );
-  //       }).toList(),
-  //       onChanged: (Commonmodel value) {
-  //         model.setproductType(value);
-  //         FocusScope.of(context).requestFocus(new FocusNode());
-  //       },
-  //     ),
-  //   );
-  // }
 
   Widget getProductType(String productType) {
     return Text(
@@ -592,31 +455,5 @@ class _KycUpdateViewState extends State<KycUpdateView> {
         ),
       ],
     );
-  }
-
-  Widget getProductTypesDropDown(KycUpdateViewModel model) {
-    _productTypeAutoFill = AutoCompleteTextField<Commonmodel>(
-      controller: productTypeAutoFillController,
-      clearOnSubmit: false,
-      itemSubmitted: (item) {
-        model.setproductType(item);
-        productTypeAutoFillController.text = item.name;
-      },
-      key: autocmptkeyProductName,
-      suggestions: model.productTypes,
-      itemBuilder: (context, item) {
-        return row(item);
-      },
-      textChanged: (value) {
-        model.setproductType(null);
-      },
-      itemSorter: (a, b) {
-        return a.name.compareTo(b.name);
-      },
-      itemFilter: (item, query) {
-        return item.name.toLowerCase().contains(query.toLowerCase());
-      },
-    );
-    return _productTypeAutoFill;
   }
 }

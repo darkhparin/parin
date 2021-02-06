@@ -17,7 +17,7 @@ class PincodeServiceabilityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<PincodeFinderViewModel>.withConsumer(
-      viewModel: PincodeFinderViewModel(),
+      viewModelBuilder: () => PincodeFinderViewModel(),
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(

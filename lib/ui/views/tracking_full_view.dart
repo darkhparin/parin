@@ -1,4 +1,5 @@
 import 'package:cwl/services/api_services.dart';
+import 'package:cwl/ui/widgets/blinking_text.dart';
 import 'package:cwl/ui/widgets/input_field.dart';
 import 'package:cwl/viewmodels/pincode_finder_view_model.dart';
 import 'package:cwl/viewmodels/tracking_full_view_model.dart';
@@ -121,128 +122,182 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   new Padding(
-                      padding: new EdgeInsets.all(8.0),
-                      child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          new Padding(
-                            padding: new EdgeInsets.all(0.0),
-                            child: Text(
-                              'DWB ${model.docketresponce.code} ',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
+                    padding: new EdgeInsets.all(8.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        new Padding(
+                          padding: new EdgeInsets.all(0.0),
+                          child: Text(
+                            'DWB ${model.docketresponce.code} ',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          new Padding(
-                            padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: new Text(
-                              '(Q: ${model.docketresponce.qty})',
-                              style: new TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ),
-                          new Padding(
-                            padding: new EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: new Text(
-                              '${model.docketresponce.mode}',
-                              style: new TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              model.transhipmentDetails.last.longitude != null
-                                  ? IconButton(
-                                      icon: new Icon(
-                                        Icons.location_on,
-                                        color: Colors.red,
-                                        size: 29,
-                                      ),
-                                      onPressed: () async {
-                                        var url =
-                                            'https://www.google.com/maps/search/?api=1&query=${model.transhipmentDetails.last.latitude},${model.transhipmentDetails.last.longitude}'; //waypoints=22.718589,72.880419|22.564561,72.984361&
-                                        print(url);
-                                        if (await canLaunch(url)) {
-                                          await launch(url,
-                                              forceSafariVC: false);
-                                        } else {
-                                          throw 'Could not launch $url';
-                                        }
-                                      },
-                                    )
-                                  : IconButton(
-                                      icon: new Icon(
-                                        Icons.location_off,
-                                        color: Colors.red,
-                                        size: 29,
-                                      ),
-                                      onPressed: () {},
-                                    ),
+                        ),
+                        new Padding(
+                          padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: model.docketresponce.dwbStatus != 'Delivered'
+                              ? BlinkingText(
+                                  '  ${model.docketresponce.dwbStatus}',
+                                  // style: new TextStyle(
+                                  //   fontSize: 18.0,
+                                  //   color: Colors.green,
+                                  // ),
+                                )
+                              : Text(
+                                  '  ${model.docketresponce.dwbStatus}  ${model.docketresponce.deliveryDate}'
+                                      .substring(0, 23),
+                                  style: new TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                        ),
+                        // new Padding(
+                        //   padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        //   child: new Text(
+                        //     '()',
+                        //     style: new TextStyle(
+                        //       fontSize: 18.0,
+                        //       color: Colors.green,
+                        //     ),
+                        //   ),
+                        // ),
+                        // new Padding(
+                        //   padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        //   child: new Text(
+                        //     '',
+                        //     style: new TextStyle(
+                        //       fontSize: 18.0,
+                        //       color: Colors.green,
+                        //     ),
+                        //   ),
+                        // ),
+                        Column(
+                          children: [
+                            model.docketresponce.dwbStatus != 'Delivered'
+                                ? model.transhipmentDetails.last.longitude !=
+                                        null
+                                    ? IconButton(
+                                        icon: new Icon(
+                                          Icons.location_on,
+                                          color: Colors.red,
+                                          size: 29,
+                                        ),
+                                        onPressed: () async {
+                                          var url =
+                                              'https://www.google.com/maps/search/?api=1&query=${model.transhipmentDetails.last.latitude},${model.transhipmentDetails.last.longitude}'; //waypoints=22.718589,72.880419|22.564561,72.984361&
+                                          print(url);
+                                          if (await canLaunch(url)) {
+                                            await launch(url,
+                                                forceSafariVC: false);
+                                          } else {
+                                            throw 'Could not launch $url';
+                                          }
+                                        },
+                                      )
+                                    : IconButton(
+                                        icon: new Icon(
+                                          Icons.location_off,
+                                          color: Colors.red,
+                                          size: 29,
+                                        ),
+                                        onPressed: () {},
+                                      )
+                                : SizedBox(
+                                    height: 0,
+                                  ),
 
-                              // Icon(
-                              //   Icons.location_on,
-                              //   color: Colors.deepOrangeAccent,
-                              // ),
-                              Text(
-                                'Location',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
+                            // Icon(
+                            //   Icons.location_on,
+                            //   color: Colors.deepOrangeAccent,
+                            // ),
+                            Text(
+                              '(${model.transhipmentDetails.last.addressnew})',
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // new Padding(
+                  //     padding: new EdgeInsets.all(5.0),
+                  //     child: new Row(
+                  //       children: <Widget>[
+                  //         new Padding(
+                  //           padding: new EdgeInsets.all(0.0),
+                  //           child: new Icon(
+                  //             Icons.arrow_downward,
+                  //             color: Colors.deepOrangeAccent,
+                  //           ),
+                  //         ),
+                  //         new Padding(
+                  //           padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  //           child: new Text(
+                  //             '  ${model.docketresponce.consignor}',
+                  //             style: new TextStyle(
+                  //                 fontSize: 18.0,
+                  //                 color: Colors.deepOrangeAccent,
+                  //                 fontWeight: FontWeight.bold),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     )),
+                  // new Padding(
+                  //     padding: new EdgeInsets.all(5.0),
+                  //     child: new Row(
+                  //       children: <Widget>[
+                  //         new Padding(
+                  //           padding: new EdgeInsets.all(0.0),
+                  //           child: new Icon(
+                  //             Icons.home,
+                  //             color: Colors.blueAccent,
+                  //           ),
+                  //         ),
+                  //         new Padding(
+                  //           padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  //           child: new Text(
+                  //             '  ${model.docketresponce.consignee}',
+                  //             style: new TextStyle(
+                  //                 fontSize: 18.0,
+                  //                 color: Colors.blueAccent,
+                  //                 fontWeight: FontWeight.bold),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     )),
+                  SizedBox(
+                    height: 0,
+                  ),
                   new Padding(
-                      padding: new EdgeInsets.all(5.0),
+                      padding: new EdgeInsets.fromLTRB(10, 0, 0, 0),
                       child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
+                          Expanded(
+                              child: Text('QTY: ${model.docketresponce.qty}')),
                           new Padding(
-                            padding: new EdgeInsets.all(0.0),
-                            child: new Icon(
-                              Icons.arrow_downward,
-                              color: Colors.deepOrangeAccent,
+                            padding: new EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            // child: RaisedButton(
+                            child: Text(
+                              'Service: ${model.docketresponce.mode}',
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
                           new Padding(
-                            padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: new Text(
-                              '  ${model.docketresponce.consignor}',
-                              style: new TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.deepOrangeAccent,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      )),
-                  new Padding(
-                      padding: new EdgeInsets.all(5.0),
-                      child: new Row(
-                        children: <Widget>[
-                          new Padding(
-                            padding: new EdgeInsets.all(0.0),
-                            child: new Icon(
-                              Icons.home,
-                              color: Colors.blueAccent,
-                            ),
-                          ),
-                          new Padding(
-                            padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: new Text(
-                              '  ${model.docketresponce.consignee}',
-                              style: new TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.blueAccent,
-                                  fontWeight: FontWeight.bold),
+                            padding: new EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            // child: RaisedButton(
+                            child: Text(
+                              'Packet No: ${model.docketresponce.packetDetails.codPacketNo}   ',
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
                         ],
                       )),
                   SizedBox(
-                    height: 15,
+                    height: 10,
                   ),
                   new Padding(
                       padding: new EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -251,12 +306,12 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                         children: <Widget>[
                           Expanded(
                               child: Text(
-                                  'Pay Mode: ${model.docketresponce.paymentMode}')),
+                                  'Weight: ${model.docketresponce.weight}')),
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 20, 0),
                             // child: RaisedButton(
                             child: Text(
-                              'Weight: ${model.docketresponce.weight} ',
+                              'Pay Mode: ${model.docketresponce.paymentMode} ',
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -281,14 +336,26 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           new Padding(
                             padding: new EdgeInsets.all(0.0),
                             child: Text(
-                              'Booking: ${model.docketresponce.bookingDate}',
+                              'B D: ${model.docketresponce.bookingDate}'
+                                  .substring(0, 15),
                               style: TextStyle(color: Colors.orange),
                             ),
                           ),
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 2, 0),
                             child: new Text(
-                              '  ${model.docketresponce.bookingStation}',
+                              '  ${model.docketresponce.bookingStation}'
+                                  .substring(0, 7),
+                              style: new TextStyle(
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ),
+                          new Padding(
+                            padding: new EdgeInsets.fromLTRB(0, 0, 2, 0),
+                            child: new Text(
+                              '  ${model.docketresponce.consignor}'
+                                  .substring(0, 15),
                               style: new TextStyle(
                                 color: Colors.orange,
                               ),
@@ -297,7 +364,7 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                         ],
                       )),
                   SizedBox(
-                    height: 5,
+                    height: 0,
                   ),
                   new Padding(
                       padding: new EdgeInsets.all(8.0),
@@ -307,14 +374,26 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           new Padding(
                             padding: new EdgeInsets.all(0.0),
                             child: Text(
-                              'Delivery: ${model.docketresponce.expDeliveryDate}',
+                              'EDD: ${model.docketresponce.expDeliveryDate}'
+                                  .substring(0, 15),
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 2, 0),
                             child: new Text(
-                              '  ${model.docketresponce.deliveryStation}',
+                              '  ${model.docketresponce.deliveryStation}'
+                                  .substring(0, 7),
+                              style: new TextStyle(
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                          ),
+                          new Padding(
+                            padding: new EdgeInsets.fromLTRB(0, 0, 2, 0),
+                            child: new Text(
+                              '  ${model.docketresponce.consignee}'
+                                  .substring(0, 15),
                               style: new TextStyle(
                                 color: Colors.blueAccent,
                               ),
@@ -346,20 +425,25 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(
-                            child: Text(
-                                'Delivery Date: ${model.docketresponce.deliveryDate == null ? '00.00.0000' : model.docketresponce.deliveryDate}'),
-                          ),
+                          model.docketresponce.dwbStatus == 'Delivered'
+                              ? Expanded(
+                                  child: Text(''),
+                                )
+                              : Expanded(
+                                  child: Text(
+                                      'Expected Delivery Date: ${model.docketresponce.expDeliveryDate == null ? '00.00.0000' : model.docketresponce.expDeliveryDate}'
+                                          .substring(0, 34)),
+                                ),
                           new Padding(
                             padding: new EdgeInsets.fromLTRB(0, 0, 20, 20),
                             // child: RaisedButton(
 
-                            child: Text(
-                              '${model.docketresponce.dwbStatus} ',
-                              style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                            // child: Text(
+                            //   '${model.docketresponce.dwbStatus} ',
+                            //   style: TextStyle(
+                            //       color: Colors.redAccent,
+                            //       fontWeight: FontWeight.bold),
+                            // ),
                           ),
                         ],
                       )),
@@ -386,7 +470,7 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
             itemCount: model.transhipmentDetails.length,
             itemBuilder: (BuildContext ctxt, int idx) {
               return Container(
-                height: 170,
+                height: 120,
                 margin:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
@@ -426,7 +510,7 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                                   new Padding(
                                     padding: new EdgeInsets.all(0.0),
                                     child: Text(
-                                      'Transhipment  ${model.transhipmentDetails[idx].sequenceNr}',
+                                      'T - ${model.transhipmentDetails[idx].sequenceNr}',
                                       style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.black,
@@ -436,34 +520,63 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                                   new Padding(
                                     padding:
                                         new EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: new Text(
-                                      ' In ${model.transhipmentDetails[idx].vehicle} ',
-                                      style: new TextStyle(
-                                        fontSize: 17.0,
-                                        color: Colors.green,
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        new Text(
+                                          '  ${model.transhipmentDetails[idx].vehicle} ',
+                                          style: new TextStyle(
+                                            fontSize: 17.0,
+                                            color: Colors.grey[500],
+                                          ),
+                                        ),
+                                        Text(
+                                          '  ${model.transhipmentDetails[idx].trip}',
+                                          style: TextStyle(fontSize: 16),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ],
                               )),
-                          Text(
-                            'From:   ${model.transhipmentDetails[idx].fromStation}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '${model.transhipmentDetails[idx].fromStation}',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                              Text(
+                                  ' ${model.transhipmentDetails[idx].dispatchDate} '
+                                      .substring(0, 11)),
+                              Text(
+                                  '   Waiting : ${model.transhipmentDetails[idx].onHoldHours == null ? 0 : model.transhipmentDetails[idx].onHoldHours} Hours')
+                            ],
                           ),
                           SizedBox(
-                            height: 5,
+                            height: 8,
                           ),
-                          Text(
-                            'TO:       ${model.transhipmentDetails[idx].toStation}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '${model.transhipmentDetails[idx].toStation}',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              model.transhipmentDetails[idx].arrivalDate == null
+                                  ? Text(
+                                      ' ${model.transhipmentDetails[idx].arrivalDate} ')
+                                  : Text(
+                                      ' ${model.transhipmentDetails[idx].arrivalDate}'
+                                          .substring(0, 11)),
+                            ],
                           ),
                           SizedBox(
                             height: 10,
@@ -471,42 +584,42 @@ class _DocketTrackingViewViewState extends State<DocketTrackingViewView> {
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(
-                                'Trip: ${model.transhipmentDetails[idx].trip}  ||  ',
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                              new Text(
-                                ' Weight: ${model.transhipmentDetails[idx].weight}  ||  ',
-                                style: new TextStyle(color: Colors.black),
-                              ),
-                              new Text(
-                                ' Qty: ${model.transhipmentDetails[idx].qty}  ||  ',
-                                style: new TextStyle(color: Colors.black),
-                              ),
-                              new Text(
-                                ' Hold: ${model.transhipmentDetails[idx].onHoldHours == null ? 0 : model.transhipmentDetails[idx].onHoldHours} Hours',
-                                style: new TextStyle(color: Colors.red),
-                              ),
+                              // Text(
+                              //   '',
+                              //   style: const TextStyle(color: Colors.black),
+                              // ),
+                              // new Text(
+                              //   ' Weight: ${model.transhipmentDetails[idx].weight}  ||  ',
+                              //   style: new TextStyle(color: Colors.black),
+                              // ),
+                              // new Text(
+                              //   ' Qty: ${model.transhipmentDetails[idx].qty}  ||  ',
+                              //   style: new TextStyle(color: Colors.black),
+                              // ),
+                              // new Text(
+                              //   ' Hold: ${model.transhipmentDetails[idx].onHoldHours == null ? 0 : model.transhipmentDetails[idx].onHoldHours} Hours',
+                              //   style: new TextStyle(color: Colors.red),
+                              // ),
                             ],
                           ),
                           SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            'Dispatch Date: ${model.transhipmentDetails[idx].dispatchDate}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Arrival Date: ${model.transhipmentDetails[idx].arrivalDate}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
+                          // Text(
+                          //   'Dispatch Date: ${model.transhipmentDetails[idx].dispatchDate}',
+                          //   style: const TextStyle(
+                          //     fontSize: 15,
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          // Text(
+                          //   'Arrival Date: ${model.transhipmentDetails[idx].arrivalDate}',
+                          //   style: const TextStyle(
+                          //     fontSize: 15,
+                          //   ),
+                          // ),
                         ],
                       ),
                       // Image.asset(

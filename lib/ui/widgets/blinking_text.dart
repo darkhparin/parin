@@ -24,7 +24,8 @@ class BlinkingTextState extends State<BlinkingText> {
   @override
   Widget build(BuildContext context) => Text(widget._target,
       style: _show
-          ? TextStyle(color: Colors.red, fontSize: 18)
+          ? TextStyle(
+              color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold)
           : TextStyle(
               color: Colors.blue, fontSize: 18, fontWeight: FontWeight.bold));
 

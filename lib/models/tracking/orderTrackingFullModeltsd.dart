@@ -19,6 +19,7 @@ class OrderTrackingFullModeltsd {
 
   num latitude;
   num longitude;
+  String addressnew;
 
   factory OrderTrackingFullModeltsd.fromJson(Map<String, dynamic> json) =>
       _$OrderTrackingFullModeltsdFromJson(json);

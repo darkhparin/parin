@@ -457,7 +457,7 @@ Widget branchTripListNew(context, BranchListViewModel model) {
                                                     }
                                                   },
                                                   child: new Text(
-                                                    "Live Location ",
+                                                    "${model.triplist[idx]?.addressnew}  ",
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   ),

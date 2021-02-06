@@ -3,7 +3,9 @@ import 'package:cwl/common/RateCalc.dart';
 import 'package:cwl/common/chat/main.dart';
 import 'package:cwl/models/params/partbupdateparam.dart';
 import 'package:cwl/ui/parameeters/party_add_parameter.dart';
+import 'package:cwl/ui/views/Bank_Account_Verify_view.dart';
 import 'package:cwl/ui/views/KYC_Update_view.dart';
+import 'package:cwl/ui/views/Kyc_Verify_view.dart';
 import 'package:cwl/ui/views/Order_Invoice_Create_View.dart';
 import 'package:cwl/ui/views/Pincode_Serviceability_view.dart';
 import 'package:cwl/ui/views/booking_party_add_view.dart';
@@ -183,6 +185,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name,
         viewToShow: KycUpdateView(),
+      );
+
+    case KycVerifyViewRoute:
+      return _getPageRoute(
+        routeName: settings.name,
+        viewToShow: KycverifyedViewView(),
+      );
+    case BankAccountViewRoute:
+      return _getPageRoute(
+        routeName: settings.name,
+        viewToShow: BankAccountView(),
       );
 
     /*

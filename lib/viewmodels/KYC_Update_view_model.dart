@@ -5,6 +5,7 @@ import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/navigation_service.dart';
 import 'package:cwl/ui/views/KYC_Update_view.dart';
+import 'package:cwl/ui/widgets/SnackBar.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import '../locator.dart';
@@ -139,7 +140,30 @@ class KycUpdateViewModel extends BaseModel {
   void setPartyLatestListResponce(List<Commonmodel> model) {
     setPartyList(null);
     _partyLatestList = model == null ? new List<Commonmodel>() : model;
+    // _partyLatestList.sort((a, b) => a.name.compareTo(b.name));
     notifyListeners();
+  }
+
+  List<Commonmodel> _partySearch = new List<Commonmodel>();
+  List<Commonmodel> get partySearch => _partySearch;
+  Future<void> setpartysearch(List<Commonmodel> val) async {
+    _partySearch = val == null ? new List<Commonmodel>() : val;
+    notifyListeners();
+  }
+
+  /// filter Search Party *
+  void search(String party) {
+    var _partyName = party;
+    if (_partyLatestList != null) {
+      // var party = _partyLatestList.distance;
+      var filter = _partyLatestList
+          .where((d) => d.name.toLowerCase().contains(_partyName.toLowerCase()))
+          .toList();
+      setpartysearch(filter);
+      setPartyList(null);
+    } else {
+      setpartysearch(null);
+    }
   }
 
   Commonmodel _partyLatestList1 = new Commonmodel();
@@ -150,6 +174,7 @@ class KycUpdateViewModel extends BaseModel {
     if (_partyLatestList1 != null) {
       var setpartyid = _partyLatestList1.id;
       await getPartyContactDetails1(setpartyid);
+      setpartysearch(null);
       notifyListeners();
     }
   }
@@ -161,6 +186,7 @@ class KycUpdateViewModel extends BaseModel {
       var partyContactDetails =
           await _apiService.partyAPIService.getPartyContactDetails(setpartyid);
       setpartyContectDetails(partyContactDetails);
+      setpartysearch(null);
 
       setBusy(false);
       if (partyContactDetails != null) {
@@ -259,6 +285,7 @@ class KycUpdateViewModel extends BaseModel {
       setBusy(false);
       if (result == true) {
         _navigationService.navigateReplacementTo(KycUpdateViewRoute);
+        rtoastMassage('KYC Submitted Successfully');
       }
     } catch (e) {
       setBusy(false);

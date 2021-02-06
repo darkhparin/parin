@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cwl/models/application/BankAccountVerifyModel.dart';
+import 'package:cwl/models/application/PANVerifyModel.dart';
 import 'package:cwl/models/application/index.dart';
 import 'package:http/http.dart' as http;
 
@@ -209,6 +211,43 @@ class AccountAPIService {
 
     if (response.statusCode == 200) {
       var result = (json.decode(response.body));
+      return result;
+    } else {
+      throw new Exception(response.body);
+    }
+  }
+
+  /// Get Bank Account Details  Responce
+  Future<BankAccountVerifyModel> getBankAccountDetails(
+      String ifsc, String accountNo, String accountName) async {
+    var response = await _client.get(
+      '$_endpoint/CWLServices/GetBankAccountDetails/$ifsc/$accountNo/$accountName',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "$_token"
+      },
+    );
+    if (response.statusCode == 200) {
+      var result = BankAccountVerifyModel.fromJson(json.decode(response.body));
+      return result;
+    } else {
+      throw new Exception(response.body);
+    }
+  }
+
+  /// Get PAN Number  Details  Responce
+  Future<PanVerifyModel> getPANNumberDetails(String panno) async {
+    var response = await _client.get(
+      '$_endpoint/CWLServices/GetPANDetails/$panno',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "$_token"
+      },
+    );
+    if (response.statusCode == 200) {
+      var result = PanVerifyModel.fromJson(json.decode(response.body));
       return result;
     } else {
       throw new Exception(response.body);

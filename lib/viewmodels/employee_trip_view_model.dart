@@ -4,7 +4,7 @@ import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/navigation_service.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+
 import '../locator.dart';
 import 'base_model.dart';
 
@@ -16,11 +16,17 @@ class BranchListViewModel extends BaseModel {
   Future handleStartUpLogic() async {
     try {
       setBusy(true);
+      // getGPSResponce();
+
+      GpsRequestModel model = new GpsRequestModel();
+      model.userId = 1004;
+      var gpsResponce = await _apiService.tripAPIService.getGPSResponce(model);
+      setgpsresponce(gpsResponce.allLastLocation);
 
       var userBranchesResponce =
           await _apiService.tripAPIService.getUserBranchesResponce();
       setbranchlists(userBranchesResponce);
-      getGPSResponce();
+
       // List ewList1 = new List.from([BranchModel])..addAll([AllLastLocation]);
       // print(ewList1);
 
@@ -91,16 +97,34 @@ class BranchListViewModel extends BaseModel {
       for (var gp in _gpslist) {
         var myData = new TripDetailsModel();
         try {
+          setBusy(true);
           myData = _triplist.where((tl) => tl.carrier == gp.vehName).first;
         } catch (e) {
           myData = null;
         }
 
         if (myData != null) {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+              num.parse(gp.latitute), num.parse(gp.longitude));
+          Placemark place = placemarks[0];
+          // print(
+          //     '${place.street},${place.administrativeArea},${place.locality},${place.name},${place.subAdministrativeArea},');
+
           myData.latitude = num.parse(gp.latitute);
           myData.longitude = num.parse(gp.longitude);
+          myData.addressnew = place.subAdministrativeArea.toString();
         }
+
+        setBusy(false);
       }
+
+      // var myaddress = new TripDetailsModel();
+      // List<Placemark> placemarks =
+      //     await placemarkFromCoordinates(21.291420, 70.257031);
+      // Placemark place = placemarks[0];
+      // print(
+      //     '${place.street},${place.administrativeArea},${place.locality},${place.name},${place.subAdministrativeArea},');
+      // myaddress.address = place.subAdministrativeArea.toString();
     }
     notifyListeners();
   }

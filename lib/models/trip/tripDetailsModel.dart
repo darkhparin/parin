@@ -41,6 +41,7 @@ class TripDetailsModel {
 
   num latitude;
   num longitude;
+  String addressnew;
 
   factory TripDetailsModel.fromJson(Map<String, dynamic> json) =>
       _$TripDetailsModelFromJson(json);

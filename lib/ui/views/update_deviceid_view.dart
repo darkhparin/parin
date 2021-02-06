@@ -96,7 +96,8 @@ class UpdateDeviceIdView extends StatelessWidget {
                                 child: Text(
                                   'Enter OTP For Mobile Confirmation',
                                   style: TextStyle(
-                                      fontSize: displayWidth(context) * 0.039, color: Colors.red),
+                                      fontSize: displayWidth(context) * 0.039,
+                                      color: Colors.red),
                                 ),
                               ),
                               Container(

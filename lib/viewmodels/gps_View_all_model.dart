@@ -7,6 +7,7 @@ import 'package:cwl/models/masterindex.dart';
 import 'package:cwl/services/api_services.dart';
 import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/navigation_service.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:package_info/package_info.dart';
 
 import '../locator.dart';

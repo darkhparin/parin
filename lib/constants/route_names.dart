@@ -26,6 +26,8 @@ const String BranchListViewRoute = "BranchListView";
 const String TripDepartDriverViewRoute = "TripDepartDriverView";
 const String GPSViewAllViewRoute = "GpsVehicleView";
 const String KycUpdateViewRoute = "KycUpdateView";
+const String KycVerifyViewRoute = "KycVerifyView";
+const String BankAccountViewRoute = "BankAccountView";
 
 // DashBoards
 const String DashBoardDriverViewRoute = "DashBoardDriverView";

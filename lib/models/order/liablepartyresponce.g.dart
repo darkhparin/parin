@@ -28,7 +28,9 @@ Liablepartyresponce _$LiablepartyresponceFromJson(Map<String, dynamic> json) {
     ..pincodes = (json['pincodes'] as List)
         ?.map((e) =>
             e == null ? null : Pincodeshort.fromJson(e as Map<String, dynamic>))
-        ?.toList();
+        ?.toList()
+    ..marketingPerson =
+        json['marketingPerson'] == null ? 0 : json['marketingPerson'] as num;
 }
 
 Map<String, dynamic> _$LiablepartyresponceToJson(
@@ -44,5 +46,6 @@ Map<String, dynamic> _$LiablepartyresponceToJson(
       'productType': instance.productType,
       'pickupType': instance.pickupType,
       'deliveryType': instance.deliveryType,
-      'pincodes': instance.pincodes
+      'pincodes': instance.pincodes,
+      'marketingPerson': instance.marketingPerson
     };

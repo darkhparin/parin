@@ -15,7 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider_architecture/provider_architecture.dart';
 
 import 'guest_view.dart';
@@ -104,6 +104,7 @@ class _BookingViewState extends State<BookingView> {
 
   List<String> _checked = []; //["A", "B"]; For COD DACC
   bool isChecked = false;
+  bool isCheckedOrderVeryfy = false;
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider<BookingViewModel>.withConsumer(
@@ -239,7 +240,8 @@ class _BookingViewState extends State<BookingView> {
                                     model.removeEwayBillNoatindex(idx);
                                   },
                                 ),
-                                title: Text(model.ewayBillList[idx].toString()),
+                                title: Text(
+                                    '${model.ewayBillList[idx].toString()}'),
                               ),
                             );
                           }),
@@ -446,6 +448,7 @@ class _BookingViewState extends State<BookingView> {
                         }).toList(),
                         onChanged: (Commonmodel value) {
                           model.settransportAs(value);
+
                           FocusScope.of(context).requestFocus(new FocusNode());
                         },
                       ),
@@ -484,16 +487,16 @@ class _BookingViewState extends State<BookingView> {
                             },
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 5),
-                          child: BusyButton(
-                              title: 'Refresh RateCard',
-                              busy: model.busy,
-                              onPressed: () {
-                                model.getRateCardsAsync();
-                              }),
-                        ),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 5, vertical: 5),
+                        //   child: BusyButton(
+                        //       title: 'Refresh RateCard',
+                        //       busy: model.busy,
+                        //       onPressed: () {
+                        //         model.getRateCardsAsync();
+                        //       }),
+                        // ),
                       ],
                     ),
                     verticalSpaceMedium,
@@ -619,40 +622,88 @@ class _BookingViewState extends State<BookingView> {
                       ),
                     ),
                     verticalSpaceMedium,
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: InputField(
-                            placeholder: 'Legth',
-                            controller: olgLengthController,
-                            textInputType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: InputField(
-                            placeholder: 'Height',
-                            controller: olgheightController,
-                            textInputType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: InputField(
-                            placeholder: 'Width',
-                            controller: olgwidthController,
-                            textInputType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                      ],
-                    ),
+                    model.shapeType?.name == 'Square'
+                        ? Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Legth',
+                                  controller: olgLengthController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                            ],
+                          )
+                        : SizedBox(),
+                    model.shapeType?.name == 'Rectangle'
+                        ? Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Legth',
+                                  controller: olgLengthController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Height',
+                                  controller: olgheightController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Width',
+                                  controller: olgwidthController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              )
+                            ],
+                          )
+                        : SizedBox(),
+                    model.shapeType?.name == 'Cylinder'
+                        ? Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Height',
+                                  controller: olgheightController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: InputField(
+                                  placeholder: 'Legth',
+                                  controller: olgLengthController,
+                                  textInputType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                            ],
+                          )
+                        : SizedBox(),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -736,260 +787,275 @@ class _BookingViewState extends State<BookingView> {
 
                     getImagePicker(),
                     verticalSpaceMedium,
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.orange[100],
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blue,
-                              blurRadius: 10.0, // soften the shadow
-                              spreadRadius: 2.0, //extend the shadow
-                              offset: Offset(
-                                0.0, // Move to right 10  horizontally
-                                0.0, // Move to bottom 10 Vertically
-                              ),
-                            )
-                          ],
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(25.0),
-                              bottomRight: Radius.circular(25.0))),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Final Rate',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            'Rate : ${model.ratecalculationresponce?.rate == null ? 0.0 : model.ratecalculationresponce?.rate}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'Freight : ${model.ratecalculationresponce?.chargableFreight == null ? 0.0 : model.ratecalculationresponce?.chargableFreight}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'Fuel Surcharge : ${model.ratecalculationresponce?.fuelSurcharge == null ? 0.0 : model.ratecalculationresponce?.fuelSurcharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'Docket : ${model.ratecalculationresponce?.docketCharge == null ? 0.0 : model.ratecalculationresponce?.docketCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'POD : ${model.ratecalculationresponce?.podCharge == null ? 0.0 : model.ratecalculationresponce?.podCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'FOD : ${model.ratecalculationresponce?.fodCharge == null ? 0.0 : model.ratecalculationresponce?.fodCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'OPA : ${model.ratecalculationresponce?.opaCharge == null ? 0.0 : model.ratecalculationresponce?.opaCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'ODA : ${model.ratecalculationresponce?.odaCharge == null ? 0.0 : model.ratecalculationresponce?.odaCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'FOV : ${model.ratecalculationresponce?.fovCharge == null ? 0.0 : model.ratecalculationresponce?.fovCharge}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceTiny,
-                          Row(children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 5),
-                              child: Text(
-                                'Fuel Surcharge :                 ',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Expanded(
-                              child: InputField(
-                                placeholder:
-                                    '${model.ratecalculationresponce?.fuelSurchargePercent == null ? 0.0 : model.ratecalculationresponce?.fuelSurchargePercent}',
-                                controller: fuelSurchargePercentController,
-                                textInputType: TextInputType.number,
-                                onChanged: (text) {
-                                  model.setfualsarcharge(text);
-                                },
-                              ),
-                            ),
-                          ]),
-                          verticalSpaceTiny,
-                          Row(children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 5),
-                              child: Text(
-                                'FOV In %:                             ',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Expanded(
-                              child: InputField(
-                                placeholder:
-                                    '${model.ratecalculationresponce?.fovPercentage == null ? '0.0' : model.ratecalculationresponce?.fovPercentage}',
-                                controller: fovController,
-                                textInputType: TextInputType.number,
-                                onChanged: (text) {
-                                  model.setfov(text);
-                                },
-                              ),
-                            ),
-                          ]),
-                          verticalSpaceSmall,
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //       color: Colors.orange[100],
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.blue,
+                    //           blurRadius: 10.0, // soften the shadow
+                    //           spreadRadius: 2.0, //extend the shadow
+                    //           offset: Offset(
+                    //             0.0, // Move to right 10  horizontally
+                    //             0.0, // Move to bottom 10 Vertically
+                    //           ),
+                    //         )
+                    //       ],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius: BorderRadius.only(
+                    //           topLeft: Radius.circular(25.0),
+                    //           bottomRight: Radius.circular(25.0))),
+                    //   width: MediaQuery.of(context).size.width,
+                    //   padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     children: <Widget>[
+                    //       SizedBox(
+                    //         width: MediaQuery.of(context).size.width,
+                    //         child: Column(
+                    //           children: <Widget>[
+                    //             Text(
+                    //               'Final Rate',
+                    //               style: TextStyle(
+                    //                   fontSize: 20,
+                    //                   color: Colors.blue,
+                    //                   fontWeight: FontWeight.bold),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         'Rate : ${model.ratecalculationresponce?.rate == null ? 0.0 : model.ratecalculationresponce?.rate}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'Freight : ${model.ratecalculationresponce?.chargableFreight == null ? 0.0 : model.ratecalculationresponce?.chargableFreight}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'Fuel Surcharge : ${model.ratecalculationresponce?.fuelSurcharge == null ? 0.0 : model.ratecalculationresponce?.fuelSurcharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'Docket : ${model.ratecalculationresponce?.docketCharge == null ? 0.0 : model.ratecalculationresponce?.docketCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'POD : ${model.ratecalculationresponce?.podCharge == null ? 0.0 : model.ratecalculationresponce?.podCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'FOD : ${model.ratecalculationresponce?.fodCharge == null ? 0.0 : model.ratecalculationresponce?.fodCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'OPA : ${model.ratecalculationresponce?.opaCharge == null ? 0.0 : model.ratecalculationresponce?.opaCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'ODA : ${model.ratecalculationresponce?.odaCharge == null ? 0.0 : model.ratecalculationresponce?.odaCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'FOV : ${model.ratecalculationresponce?.fovCharge == null ? 0.0 : model.ratecalculationresponce?.fovCharge}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceTiny,
+                    //       Row(children: <Widget>[
+                    //         Container(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 5, vertical: 5),
+                    //           child: Text(
+                    //             'Fuel Surcharge :                 ',
+                    //             style: TextStyle(fontSize: 16.0),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: model.rateCard?.isDefault == false
+                    //               ? Text(
+                    //                   'Fuel Surcharge : ${model.ratecalculationresponce?.fuelSurchargePercent == null ? 0.0 : model.ratecalculationresponce?.fuelSurchargePercent}',
+                    //                   style: TextStyle(fontSize: 16.0),
+                    //                 )
+                    //               : InputField(
+                    //                   placeholder:
+                    //                       '${model.ratecalculationresponce?.fuelSurchargePercent == null ? 0.0 : model.ratecalculationresponce?.fuelSurchargePercent}',
+                    //                   controller:
+                    //                       fuelSurchargePercentController,
+                    //                   textInputType: TextInputType.number,
+                    //                   onChanged: (text) {
+                    //                     model.setfualsarcharge(text);
+                    //                   },
+                    //                 ),
+                    //         ),
+                    //       ]),
+                    //       verticalSpaceTiny,
+                    //       Row(children: <Widget>[
+                    //         Container(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 5, vertical: 5),
+                    //           child: Text(
+                    //             'FOV In %:                             ',
+                    //             style: TextStyle(fontSize: 16.0),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: model.rateCard?.isDefault == false
+                    //               ? Text(
+                    //                   'FOV : ${model.ratecalculationresponce?.fovPercentage == null ? 0.0 : model.ratecalculationresponce?.fovPercentage}',
+                    //                   style: TextStyle(fontSize: 16.0),
+                    //                 )
+                    //               : InputField(
+                    //                   placeholder:
+                    //                       '${model.ratecalculationresponce?.fovPercentage == null ? '0.0' : model.ratecalculationresponce?.fovPercentage}',
+                    //                   controller: fovController,
+                    //                   textInputType: TextInputType.number,
+                    //                   onChanged: (text) {
+                    //                     model.setfov(text);
+                    //                   },
+                    //                 ),
+                    //         ),
+                    //       ]),
+                    //       verticalSpaceSmall,
 
-                          Row(children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 5),
-                              child: Text(
-                                'Misc Charge :                      ',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Expanded(
-                              child: InputField(
-                                  placeholder:
-                                      '${model.ratecalculationresponce?.miscCharge == null ? 0.0 : model.ratecalculationresponce?.miscCharge}',
-                                  controller: miscController,
-                                  textInputType: TextInputType.number,
-                                  onChanged: (text) {
-                                    model.setmisChargenotify(text);
-                                  }),
-                            ),
-                          ]),
-                          // Text(
-                          //   'Misc Charge : ${model.ratecalculationresponce?.miscCharge == null ? 0.0 : model.ratecalculationresponce?.miscCharge}',
-                          //   style: TextStyle(fontSize: 16.0),
-                          // ),
-                          verticalSpaceTiny,
-                          Row(children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 5),
-                              child: Text(
-                                'Loading Charge:                 ',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Expanded(
-                              child: InputField(
-                                placeholder:
-                                    '${model.ratecalculationresponce?.loadingCharges == null ? 0.0 : model.ratecalculationresponce?.loadingCharges}',
-                                controller: loadingController,
-                                textInputType: TextInputType.number,
-                                onChanged: (text) {
-                                  model.setLodingChargenotify(text);
-                                },
-                              ),
-                            ),
-                          ]),
-                          // Text(
-                          //   'Loading : ${model.ratecalculationresponce?.loadingCharges == null ? 0.0 : model.ratecalculationresponce?.loadingCharges}',
-                          //   style: TextStyle(fontSize: 16.0),
-                          // ),
-                          verticalSpaceTiny,
-                          Row(children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 5),
-                              child: Text(
-                                'Unloading Charge:             ',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Expanded(
-                              child: InputField(
-                                placeholder:
-                                    '${model.ratecalculationresponce?.unLoadingCharges == null ? 0.0 : model.ratecalculationresponce?.unLoadingCharges}',
-                                controller: unloadingController,
-                                textInputType: TextInputType.number,
-                                onChanged: (text) {
-                                  model.setUnlodingChargenoty(text);
-                                },
-                              ),
-                            ),
-                          ]),
-                          // Text(
-                          //   'Unloading : ${model.ratecalculationresponce?.unLoadingCharges == null ? 0.0 : model.ratecalculationresponce?.unLoadingCharges}',
-                          //   style: TextStyle(fontSize: 16.0),
-                          // ),
-                          verticalSpaceSmall,
-                          checkDACCCOD(model),
+                    //       Row(children: <Widget>[
+                    //         Container(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 5, vertical: 5),
+                    //           child: Text(
+                    //             'Misc Charge :                      ',
+                    //             style: TextStyle(fontSize: 16.0),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: InputField(
+                    //               placeholder:
+                    //                   '${model.ratecalculationresponce?.miscCharge == null ? 0.0 : model.ratecalculationresponce?.miscCharge}',
+                    //               controller: miscController,
+                    //               textInputType: TextInputType.number,
+                    //               onChanged: (text) {
+                    //                 model.setmisChargenotify(text);
+                    //               }),
+                    //         ),
+                    //       ]),
+                    //       // Text(
+                    //       //   'Misc Charge : ${model.ratecalculationresponce?.miscCharge == null ? 0.0 : model.ratecalculationresponce?.miscCharge}',
+                    //       //   style: TextStyle(fontSize: 16.0),
+                    //       // ),
+                    //       verticalSpaceTiny,
+                    //       Row(children: <Widget>[
+                    //         Container(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 5, vertical: 5),
+                    //           child: Text(
+                    //             'Loading Charge:                 ',
+                    //             style: TextStyle(fontSize: 16.0),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: model.rateCard?.isDefault == false
+                    //               ? Text(
+                    //                   'Loading : ${model.ratecalculationresponce?.loadingCharges == null ? 0.0 : model.ratecalculationresponce?.loadingCharges}',
+                    //                   style: TextStyle(fontSize: 16.0),
+                    //                 )
+                    //               : InputField(
+                    //                   placeholder:
+                    //                       '${model.ratecalculationresponce?.loadingCharges == null ? 0.0 : model.ratecalculationresponce?.loadingCharges}',
+                    //                   controller: loadingController,
+                    //                   textInputType: TextInputType.number,
+                    //                   onChanged: (text) {
+                    //                     model.setLodingChargenotify(text);
+                    //                   },
+                    //                 ),
+                    //         ),
+                    //       ]),
 
-                          // Text(
-                          //   'COD : ${model.ratecalculationresponce?.codCharge == null ? 0.0 : model.ratecalculationresponce?.codCharge}',
-                          //   style: TextStyle(fontSize: 16.0),
-                          // ),
-                          // verticalSpaceSmall,
-                          // Text(
-                          //   'DACC : ${model.ratecalculationresponce?.daccCharge == null ? 0.0 : model.ratecalculationresponce?.daccCharge}',
-                          //   style: TextStyle(fontSize: 16.0),
-                          // ),
-                          verticalSpaceSmall,
-                          Text(
-                            'Chargable Freight : ${model.ratecalculationresponce?.costExcludingTax == null ? 0.0 : model.ratecalculationresponce?.costExcludingTax}',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
-                          verticalSpaceSmall,
-                          verticalSpaceMedium,
-                          Text(
-                            'IGST : ${model.ratecalculationresponce?.igst == null ? 0.0 : model.ratecalculationresponce?.igst}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'SGST : ${model.ratecalculationresponce?.sgst == null ? 0.0 : model.ratecalculationresponce?.sgst}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'CGST : ${model.ratecalculationresponce?.cgst == null ? 0.0 : model.ratecalculationresponce?.cgst}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'UGST : ${model.ratecalculationresponce?.ugst == null ? 0.0 : model.ratecalculationresponce?.ugst}',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          verticalSpaceSmall,
-                          Text(
-                            'Total Charge : ${model.ratecalculationresponce?.totalCharge == null ? 0.0 : model.ratecalculationresponce?.totalCharge}',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+                    //       verticalSpaceTiny,
+                    //       Row(children: <Widget>[
+                    //         Container(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 5, vertical: 5),
+                    //           child: Text(
+                    //             'Unloading Charge:             ',
+                    //             style: TextStyle(fontSize: 16.0),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: model.rateCard?.isDefault == false
+                    //               ? Text(
+                    //                   'Unloading : ${model.ratecalculationresponce?.unLoadingCharges == null ? 0.0 : model.ratecalculationresponce?.unLoadingCharges}',
+                    //                   style: TextStyle(fontSize: 16.0),
+                    //                 )
+                    //               : InputField(
+                    //                   placeholder:
+                    //                       '${model.ratecalculationresponce?.unLoadingCharges == null ? 0.0 : model.ratecalculationresponce?.unLoadingCharges}',
+                    //                   controller: unloadingController,
+                    //                   textInputType: TextInputType.number,
+                    //                   onChanged: (text) {
+                    //                     model.setUnlodingChargenoty(text);
+                    //                   },
+                    //                 ),
+                    //         ),
+                    //       ]),
+
+                    //       verticalSpaceSmall,
+                    //       checkDACCCOD(model),
+
+                    //       // Text(
+                    //       //   'COD : ${model.ratecalculationresponce?.codCharge == null ? 0.0 : model.ratecalculationresponce?.codCharge}',
+                    //       //   style: TextStyle(fontSize: 16.0),
+                    //       // ),
+                    //       // verticalSpaceSmall,
+                    //       // Text(
+                    //       //   'DACC : ${model.ratecalculationresponce?.daccCharge == null ? 0.0 : model.ratecalculationresponce?.daccCharge}',
+                    //       //   style: TextStyle(fontSize: 16.0),
+                    //       // ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'Chargable Freight : ${model.ratecalculationresponce?.costExcludingTax == null ? 0.0 : model.ratecalculationresponce?.costExcludingTax}',
+                    //         style: TextStyle(
+                    //             fontSize: 18.0, fontWeight: FontWeight.bold),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       verticalSpaceMedium,
+                    //       Text(
+                    //         'IGST : ${model.ratecalculationresponce?.igst == null ? 0.0 : model.ratecalculationresponce?.igst}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'SGST : ${model.ratecalculationresponce?.sgst == null ? 0.0 : model.ratecalculationresponce?.sgst}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'CGST : ${model.ratecalculationresponce?.cgst == null ? 0.0 : model.ratecalculationresponce?.cgst}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'UGST : ${model.ratecalculationresponce?.ugst == null ? 0.0 : model.ratecalculationresponce?.ugst}',
+                    //         style: TextStyle(fontSize: 16.0),
+                    //       ),
+                    //       verticalSpaceSmall,
+                    //       Text(
+                    //         'Total Charge : ${model.ratecalculationresponce?.totalCharge == null ? 0.0 : model.ratecalculationresponce?.totalCharge}',
+                    //         style: TextStyle(
+                    //             fontSize: 18.0, fontWeight: FontWeight.bold),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     verticalSpaceMedium,
-
+                    table(model),
                     verticalSpaceLarge,
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -1007,6 +1073,350 @@ class _BookingViewState extends State<BookingView> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget table(BookingViewModel model) {
+    return DataTable(
+      headingRowHeight: 10,
+      columns: <DataColumn>[
+        DataColumn(
+          label: Text('label'),
+        ),
+        DataColumn(
+          label: Text('Charge'),
+        ),
+      ],
+      rows: <DataRow>[
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "Rate"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.rate == null ? 0.0 : model.ratecalculationresponce?.rate}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "Freight"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.chargableFreight == null ? 0.0 : model.ratecalculationresponce?.chargableFreight}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "Fuel Surcharge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.fuelSurcharge == null ? 0.0 : model.ratecalculationresponce?.fuelSurcharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "Docket Charge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.docketCharge == null ? 0.0 : model.ratecalculationresponce?.docketCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "POD"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.podCharge == null ? 0.0 : model.ratecalculationresponce?.podCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "FOD"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.fodCharge == null ? 0.0 : model.ratecalculationresponce?.fodCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "OPA"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.opaCharge == null ? 0.0 : model.ratecalculationresponce?.opaCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "ODA"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.odaCharge == null ? 0.0 : model.ratecalculationresponce?.odaCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "FOV"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.fovCharge == null ? 0.0 : model.ratecalculationresponce?.fovCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.database, "Fuel Surcharge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.fuelSurchargePercent == null ? 0.0 : model.ratecalculationresponce?.fuelSurchargePercent}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.percent, "FOV In %"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.fovPercentage == null ? 0.0 : model.ratecalculationresponce?.fovPercentage}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.chartBar, "Misc Charge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.miscCharge == null ? 0.0 : model.ratecalculationresponce?.miscCharge}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.chartBar, "Loading Charge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.loadingCharges == null ? 0.0 : model.ratecalculationresponce?.loadingCharges}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.chartBar, "Unloading Charge"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.unLoadingCharges == null ? 0.0 : model.ratecalculationresponce?.unLoadingCharges}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(
+          cells: <DataCell>[
+            DataCell(
+              myRowDataIcon(FontAwesomeIcons.equals, "COD Charge"),
+            ),
+            DataCell(
+              Checkbox(
+                value: isChecked,
+                onChanged: (value) {
+                  setState(() {
+                    isChecked = value;
+                    model.setcodChargenotify(value);
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.equals, "Chargable Freight"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.costExcludingTax == null ? 0.0 : model.ratecalculationresponce?.costExcludingTax}',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.plus, "IGST"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.igst == null ? 0.0 : model.ratecalculationresponce?.igst}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.plus, "SGST"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.sgst == null ? 0.0 : model.ratecalculationresponce?.sgst}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.plus, "CGST"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.cgst == null ? 0.0 : model.ratecalculationresponce?.cgst}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(cells: <DataCell>[
+          DataCell(
+            myRowDataIcon(FontAwesomeIcons.plus, "UGST"),
+          ),
+          DataCell(
+            Text(
+              '${model.ratecalculationresponce?.ugst == null ? 0.0 : model.ratecalculationresponce?.ugst}',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ]),
+        DataRow(
+          cells: <DataCell>[
+            DataCell(
+              myRowDataIcon(FontAwesomeIcons.equals, "Total Charge"),
+            ),
+            DataCell(
+              Text(
+                '${model.ratecalculationresponce?.totalCharge == null ? 0.0 : model.ratecalculationresponce?.totalCharge}',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        model.canVerifyOrder
+            ? DataRow(
+                cells: <DataCell>[
+                  DataCell(
+                    myRowDataIcon(
+                        FontAwesomeIcons.equals, "Save Order Verified ? "),
+                  ),
+                  DataCell(
+                    Checkbox(
+                      value: isCheckedOrderVeryfy,
+                      onChanged: (value) {
+                        setState(() {
+                          isCheckedOrderVeryfy = value;
+                          model.setorderVerified(value);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : DataRow(
+                cells: <DataCell>[
+                  DataCell(
+                    myRowDataIcon(FontAwesomeIcons.equals, ""),
+                  ),
+                  DataCell(
+                    Text(''),
+                  ),
+                ],
+              ),
+      ],
+    );
+  }
+
+  ListTile myRowDataIcon(IconData iconVal, String rowVal) {
+    return ListTile(
+      leading: Icon(
+        iconVal,
+        color: Colors.blue[100],
+        size: 19,
+      ),
+      title: Text(
+        rowVal,
+        style: TextStyle(
+          color: Colors.black,
         ),
       ),
     );

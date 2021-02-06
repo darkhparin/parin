@@ -73,9 +73,14 @@ class BookingViewModel extends BaseModel {
 
   Commonmodel _transportAs = new Commonmodel();
   Commonmodel get transportAs => _transportAs;
-  void settransportAs(Commonmodel model) {
+  Future<void> settransportAs(Commonmodel model) async {
     setrateCards(null);
     _transportAs = model;
+    // get Rate Cards API Call
+    if (_transportAs != null) {
+      getRateCardsAsync();
+    }
+
     notifyListeners();
   }
 
@@ -143,6 +148,9 @@ class BookingViewModel extends BaseModel {
       var shapetyperesponce =
           await _apiService.orderAPIservice.getShapeTypesResponce();
       setshapeTypes(shapetyperesponce);
+      var userdetailsresponce =
+          await _apiService.accountAPIService.getUserDetails();
+      setuserdetails(userdetailsresponce);
       setBusy(false);
     } catch (e) {
       setBusy(false);
@@ -151,6 +159,13 @@ class BookingViewModel extends BaseModel {
       setproductTypes(null);
       setpackageTypes(null);
     }
+  }
+
+  Userdetails _userdetails;
+  Userdetails get userdetails => _userdetails;
+  void setuserdetails(Userdetails value) {
+    _userdetails = value;
+    notifyListeners();
   }
 
   String _errordocketno;
@@ -808,6 +823,19 @@ class BookingViewModel extends BaseModel {
       setBusy(true);
       Ratecalculationrequest model = new Ratecalculationrequest();
 
+      var fov = _rateCard.isDefault == false ? _rateCard.fov : _fov;
+
+      var fualsarcharge = _rateCard.isDefault == false
+          ? _rateCard.fuelSurcharge
+          : _fualsarcharge;
+
+      var unloding =
+          _rateCard.isDefault == false ? _rateCard.unLoadingcharges : _unloding;
+
+      var lodingCharge = _rateCard.isDefault == false
+          ? _rateCard.loadingCharges
+          : _lodingCharge;
+
       num actualWeight = 0;
       for (num actw in _orderLines.map((ol) => ol.actualWeight).toList()) {
         actualWeight += actw;
@@ -830,11 +858,11 @@ class BookingViewModel extends BaseModel {
       model.deliveryTypeId = _consignee.deliveryType.deliveryTypeId;
       model.docketNo = docketNoTextFild;
       model.ftlRateCardChargesId = 0; // TODO : Do Something for this
-      model.fuelSurchargePercent = _fualsarcharge;
-      model.fovPercent = _fov;
+      model.fuelSurchargePercent = fualsarcharge;
+      model.fovPercent = fov;
       model.isCOD = _codCharge;
       model.isDACC = false;
-      model.loadingCharge = _lodingCharge; //_rateCard.loadingCharges;
+      model.loadingCharge = lodingCharge; //_rateCard.loadingCharges;
       model.miscCharge =
           _rateCard.miscCharge > _misCharge ? _rateCard.miscCharge : _misCharge;
       model.oDADistance = _rateCard.odaDistance;
@@ -857,7 +885,10 @@ class BookingViewModel extends BaseModel {
       }
       model.totalInvoiceValue = totalInvoiceValue;
       model.transportAsId = _transportAs.id;
-      model.unloadingCharge = _unloding; //_rateCard.unLoadingcharges;
+      model.unloadingCharge = unloding; //_rateCard.unLoadingcharges;
+
+      setcanVerifyOrder(
+          _userdetails.employeeId == _liablepartyresponce?.marketingPerson);
 
       var responce =
           await _apiService.orderAPIservice.getRateCalculationResponce(model);
@@ -946,6 +977,20 @@ class BookingViewModel extends BaseModel {
     }
   }
 
+  bool _canVerifyOrder = false;
+  bool get canVerifyOrder => _canVerifyOrder;
+  void setcanVerifyOrder(bool val) {
+    _canVerifyOrder = val != null ? val : false;
+    notifyListeners();
+  }
+
+  bool _orderVerified = false;
+  bool get orderVerified => _orderVerified;
+  void setorderVerified(bool val) {
+    _orderVerified = val != null ? val : false;
+    notifyListeners();
+  }
+
   Future navigateToAddParty(
       {int branchId,
       String branch,
@@ -1017,7 +1062,7 @@ class BookingViewModel extends BaseModel {
       model.userId = _apiService.userdetails.userId;
       model.deviceTypeId = 3;
       model.vendorId = 0; // TODO
-      model.verifyAtSave = false;
+      model.verifyAtSave = orderVerified; //false;
       var result =
           await _apiService.orderAPIservice.getSaveOrderResponce(model);
       int orderidNo = result;
@@ -1025,15 +1070,19 @@ class BookingViewModel extends BaseModel {
       if (result > 0) {
         await _uploadAccountCopy(result, accountCopy);
 
-        var responce = await _dialogService.showConfirmationDialog(
-            title: 'Create Invoice',
-            description: 'Are You Sure ?',
-            cancelTitle: 'Cancel',
-            confirmationTitle: 'Create Invoice');
+        if (model.verifyAtSave && _liablepartyresponce.creditPeriod <= 0) {
+          var responce = await _dialogService.showConfirmationDialog(
+              title: 'Create Invoice',
+              description: 'Are You Sure ?',
+              cancelTitle: 'Cancel',
+              confirmationTitle: 'Create Invoice');
 
-        if (responce.confirmed) {
-          _navigationService.navigateReplacementTo(OrderInvoiceCreateRoute,
-              arguments: orderidNo);
+          if (responce.confirmed) {
+            _navigationService.navigateReplacementTo(OrderInvoiceCreateRoute,
+                arguments: orderidNo);
+          } else {
+            _navigationService.navigateReplacementTo(BookingViewRoute);
+          }
         } else {
           _navigationService.navigateReplacementTo(BookingViewRoute);
         }

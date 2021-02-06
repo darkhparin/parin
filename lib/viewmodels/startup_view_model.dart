@@ -6,6 +6,7 @@ import 'package:cwl/services/dialog_service.dart';
 import 'package:cwl/services/encryption_service.dart';
 import 'package:cwl/services/navigation_service.dart';
 import 'package:cwl/services/storage_local_service.dart';
+import 'package:cwl/ui/widgets/SnackBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -67,6 +68,7 @@ class StartUpViewModel extends BaseModel {
                         .navigateReplacementTo(GuestViewRoute));
               }
 
+              rtoastMassage('Welcome ${loginModel.username}');
               sleep1();
             } else {
               if (loginResponce.message.contains('Device Not Registered')) {
